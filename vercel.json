@@ -1,7 +1,1 @@
-{
-  "functions": {
-    "api/serpapi.js": {
-      "runtime": "@vercel/node@3"
-    }
-  }
-}
+{}
