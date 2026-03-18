@@ -70,4 +70,123 @@
     <button class="tab-btn active" onclick="switchTab('overview')">Overview</button>
     <button class="tab-btn" onclick="switchTab('timeline')">Timeline</button>
     <button class="tab-btn" onclick="switchTab('themes')">Themes</button>
-    <button class="tab-btn"
+    <button class="tab-btn" onclick="switchTab('dishes')">Dishes</button>
+    <button class="tab-btn" onclick="switchTab('benchmark')">Benchmark</button>
+    <button onclick="reset()" style="font-size:12px;padding:5px 12px;margin-left:auto;flex-shrink:0">← New search</button>
+  </div>
+  <div style="max-width:1000px;margin:0 auto;padding:1.5rem">
+    <div id="tab-overview"></div>
+    <div id="tab-timeline" class="hidden"></div>
+    <div id="tab-themes" class="hidden"></div>
+    <div id="tab-dishes" class="hidden"></div>
+    <div id="tab-benchmark" class="hidden"></div>
+  </div>
+</div>
+<script>
+const PALETTE=["#EF9F27","#378ADD","#1D9E75","#D85A30","#7F77DD"];
+let businesses=[{url:"",name:""},{url:"",name:""}];
+let results=null,charts=[];
+function esc(s){return(s||"").replace(/&/g,"&amp;").replace(/"/g,"&quot;").replace(/</g,"&lt;");}
+function show(id){document.getElementById(id).classList.remove("hidden");}
+function hide(id){document.getElementById(id).classList.add("hidden");}
+function showScreen(name){["setup","loading","results"].forEach(s=>{document.getElementById("screen-"+s).classList[s===name?"remove":"add"]("hidden");});}
+function addLog(msg,type="info"){const box=document.getElementById("log-box");const d=document.createElement("div");d.className="log-line log-"+type;d.innerHTML=`<span style="color:#555;margin-right:8px">${new Date().toLocaleTimeString()}</span>${esc(msg)}`;box.appendChild(d);box.scrollTop=box.scrollHeight;}
+function extractId(url){const m=url.match(/0x[a-f0-9]+:0x[a-f0-9]+/i);return m?m[0]:null;}
+function renderBizList(){
+  const el=document.getElementById("biz-list");el.innerHTML="";
+  businesses.forEach((b,i)=>{
+    const row=document.createElement("div");
+    row.style.cssText="display:flex;gap:8px;margin-bottom:10px;align-items:center";
+    row.innerHTML=`<div style="width:10px;height:10px;border-radius:50%;background:${PALETTE[i]};flex-shrink:0"></div><input data-i="${i}" data-k="name" value="${esc(b.name)}" placeholder="Business name" style="width:140px;flex-shrink:0"/><input data-i="${i}" data-k="url" value="${esc(b.url)}" placeholder="Paste Google Maps URL..." style="flex:1"/>${businesses.length>2?`<button onclick="removeBiz(${i})" style="font-size:18px;padding:0 8px;border:none;background:none;color:#bbb">×</button>`:""}`;
+    row.querySelectorAll("input").forEach(inp=>inp.addEventListener("input",e=>{businesses[e.target.dataset.i][e.target.dataset.k]=e.target.value;}));
+    el.appendChild(row);
+  });
+  document.getElementById("add-biz-btn").style.display=businesses.length>=5?"none":"";
+}
+function addBusiness(){if(businesses.length<5){businesses.push({url:"",name:""});renderBizList();}}
+function removeBiz(i){businesses.splice(i,1);renderBizList();}
+async function runAnalysis(){
+  const apiKey=document.getElementById("serp-key").value.trim();
+  const errEl=document.getElementById("setup-error");
+  const valid=businesses.filter(b=>b.url.trim());
+  if(!apiKey){errEl.textContent="Please enter your SerpAPI key.";show("setup-error");return;}
+  if(!valid.length){errEl.textContent="Please enter at least one Google Maps URL.";show("setup-error");return;}
+  hide("setup-error");showScreen("loading");
+  const collected=[];
+  for(let i=0;i<valid.length;i++){
+    const biz=valid[i],label=biz.name||("Business "+(i+1));
+    addLog("Processing: "+label);
+    const id=extractId(biz.url);
+    if(!id){addLog("Could not read URL for: "+label,"error");collected.push({name:label,reviews:[],error:"Bad URL"});continue;}
+    addLog("Fetching reviews for: "+label);
+    try{
+      const res=await fetch(`/api/serpapi?data_id=${encodeURIComponent(id)}&api_key=${encodeURIComponent(apiKey)}`);
+      if(!res.ok)throw new Error("HTTP "+res.status);
+      const data=await res.json();
+      if(data.error)throw new Error(data.error);
+      const name=biz.name||data.place_info?.title||label;
+      addLog(`Got ${(data.reviews||[]).length} reviews for: ${name}`,"success");
+      collected.push({name,place_info:data.place_info,reviews:data.reviews||[]});
+    }catch(e){addLog("Error for "+label+": "+e.message,"error");collected.push({name:label,reviews:[],error:e.message});}
+  }
+  addLog("Running AI analysis...");
+  try{
+    const prompt=`You are a business analyst. Analyze these Google Maps review datasets. Today is March 2026. Return ONLY valid JSON, no markdown, no backticks.\n\n${JSON.stringify(collected.map(b=>({name:b.name,place_info:b.place_info,reviews:(b.reviews||[]).slice(0,20)})))}\n\nReturn exactly:\n{"businesses":[{"name":"string","overall_rating":4.2,"total_reviews":628,"price_range":"$30-40","ratings_by_year":[{"year":"2025","avg_rating":4.1,"count":12}],"positive_themes":["theme1","theme2","theme3"],"negative_themes":["theme1","theme2"],"best_dishes":["dish1","dish2"],"worst_dishes":["dish1"],"one_line_summary":"string"}],"benchmark":{"winner":"name","winner_reason":"string","rankings":[{"name":"string","rank":1,"score":87,"strengths":"string","weaknesses":"string"}],"common_positives":["theme"],"common_negatives":["theme"],"key_differentiator":"string"}}\n\nRules: relative dates (3 weeks ago=2026,6 months ago=2025,a year ago=2025,2 years ago=2024,3 years ago=2023). best_dishes ONLY from 4-5 star reviews. worst_dishes ONLY from 1-2 star reviews.`;
+    const res=await fetch("https://api.anthropic.com/v1/messages",{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({model:"claude-sonnet-4-20250514",max_tokens:4000,messages:[{role:"user",content:prompt}]})});
+    const data=await res.json();
+    if(data.error)throw new Error(data.error.message||JSON.stringify(data.error));
+    results=JSON.parse(data.content[0].text.replace(/```json\n?/g,"").replace(/```\n?/g,"").trim());
+    addLog("Analysis complete!","success");
+    renderResults();showScreen("results");
+  }catch(e){addLog("AI analysis failed: "+e.message,"error");document.getElementById("loading-error-msg").textContent="Failed: "+e.message;show("loading-error");}
+}
+function renderResults(){charts.forEach(c=>c.destroy());charts=[];renderOverview();renderTimeline();renderThemes();renderDishes();renderBenchmark();}
+function renderOverview(){
+  const bizs=results.businesses||[],bench=results.benchmark;
+  let html=`<h2 style="margin-bottom:1.25rem">Overview</h2><div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:12px;margin-bottom:1.5rem">`;
+  bizs.forEach((biz,i)=>{html+=`<div class="card" style="border-top:3px solid ${PALETTE[i]}"><div style="font-size:13px;font-weight:600;color:${PALETTE[i]};margin-bottom:8px">${esc(biz.name)}</div><div style="display:flex;align-items:baseline;gap:6px;margin-bottom:4px"><span style="font-size:30px;font-weight:700">${(biz.overall_rating||0).toFixed(1)}</span><span style="font-size:13px;color:#aaa">/5</span></div><div style="font-size:12px;color:#888;margin-bottom:10px">${(biz.total_reviews||0).toLocaleString()} reviews</div><p style="font-size:12px;color:#666;line-height:1.6;margin-bottom:10px">${esc(biz.one_line_summary||"")}</p><div>${biz.price_range?`<span class="pill-gray">${esc(biz.price_range)}</span>`:""}${bench?.winner===biz.name?`<span class="pill-gold">Top rated</span>`:""}</div></div>`;});
+  html+=`</div><div class="card"><label class="lbl">Rating comparison</label><div style="position:relative;width:100%;height:220px"><canvas id="bar-chart"></canvas></div></div>`;
+  document.getElementById("tab-overview").innerHTML=html;
+  setTimeout(()=>{const ctx=document.getElementById("bar-chart");if(!ctx)return;charts.push(new Chart(ctx,{type:"bar",data:{labels:bizs.map(b=>b.name),datasets:[{data:bizs.map(b=>b.overall_rating||0),backgroundColor:PALETTE.slice(0,bizs.length),borderRadius:4}]},options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false}},scales:{y:{min:0,max:5}}}}));},50);
+}
+function renderTimeline(){
+  const bizs=results.businesses||[];
+  const allYears=[...new Set(bizs.flatMap(b=>(b.ratings_by_year||[]).map(r=>r.year)))].sort();
+  document.getElementById("tab-timeline").innerHTML=`<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:1.25rem"><h2>Ratings over time</h2><select id="year-filter" onchange="updateTimeline()"><option value="all">All years</option>${allYears.map(y=>`<option value="${y}">${y}</option>`).join("")}</select></div><div id="timeline-content"></div>`;
+  renderTimelineContent("all",bizs,allYears);
+}
+function updateTimeline(){const bizs=results.businesses||[];const allYears=[...new Set(bizs.flatMap(b=>(b.ratings_by_year||[]).map(r=>r.year)))].sort();renderTimelineContent(document.getElementById("year-filter").value,bizs,allYears);}
+function renderTimelineContent(filter,bizs,allYears){
+  const el=document.getElementById("timeline-content");if(!el)return;
+  if(filter==="all"){
+    el.innerHTML=`<div class="card"><div style="position:relative;width:100%;height:300px"><canvas id="line-chart"></canvas></div></div>`;
+    setTimeout(()=>{const ctx=document.getElementById("line-chart");if(!ctx)return;charts.push(new Chart(ctx,{type:"line",data:{labels:allYears,datasets:bizs.map((b,i)=>({label:b.name,data:allYears.map(y=>{const yr=(b.ratings_by_year||[]).find(r=>r.year===y);return yr?parseFloat(yr.avg_rating.toFixed(2)):null;}),borderColor:PALETTE[i],backgroundColor:PALETTE[i],tension:0.3,spanGaps:true,pointRadius:5}))},options:{responsive:true,maintainAspectRatio:false,scales:{y:{min:1,max:5}}}}));},50);
+  }else{el.innerHTML=`<div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:12px">${bizs.map((biz,i)=>{const yr=(biz.ratings_by_year||[]).find(r=>r.year===filter);return`<div class="card" style="border-top:3px solid ${PALETTE[i]}"><div style="font-size:13px;font-weight:600;color:${PALETTE[i]};margin-bottom:8px">${esc(biz.name)}</div><div style="font-size:30px;font-weight:700;margin-bottom:4px">${yr?yr.avg_rating.toFixed(1):"–"}</div><div style="font-size:12px;color:#888">${yr?yr.count+" reviews in "+filter:"No data for "+filter}</div></div>`;}).join("")}</div>`;}
+}
+function renderThemes(){
+  const bizs=results.businesses||[],bench=results.benchmark;
+  let html=`<h2 style="margin-bottom:1.25rem">Sentiment themes</h2>`;
+  if(bench?.common_positives?.length)html+=`<div style="padding:10px 14px;background:#f0faf4;border-radius:8px;margin-bottom:8px;font-size:13px"><strong style="color:#1a7a3a">Shared strengths: </strong><span style="color:#555">${bench.common_positives.join(" · ")}</span></div>`;
+  if(bench?.common_negatives?.length)html+=`<div style="padding:10px 14px;background:#fff0f0;border-radius:8px;margin-bottom:1.25rem;font-size:13px"><strong style="color:#c00">Common complaints: </strong><span style="color:#555">${bench.common_negatives.join(" · ")}</span></div>`;
+  html+=`<div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(220px,1fr));gap:12px">${bizs.map((biz,i)=>`<div class="card" style="border-top:3px solid ${PALETTE[i]}"><div style="font-size:13px;font-weight:600;color:${PALETTE[i]};margin-bottom:12px">${esc(biz.name)}</div><label class="lbl">What people love</label><div style="margin-bottom:14px">${(biz.positive_themes||[]).map(t=>`<span class="pill-green">${esc(t)}</span>`).join("")}</div><label class="lbl">Pain points</label><div>${(biz.negative_themes||[]).map(t=>`<span class="pill-red">${esc(t)}</span>`).join("")}</div></div>`).join("")}</div>`;
+  document.getElementById("tab-themes").innerHTML=html;
+}
+function renderDishes(){
+  const bizs=results.businesses||[];
+  let html=`<h2 style="margin-bottom:4px">Menu intelligence</h2><p style="font-size:13px;color:#888;margin-bottom:1.25rem">Best dishes from 4–5★ reviews only. Items to avoid from 1–2★ reviews.</p><div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(220px,1fr));gap:12px">`;
+  bizs.forEach((biz,i)=>{html+=`<div class="card" style="border-top:3px solid ${PALETTE[i]}"><div style="font-size:13px;font-weight:600;color:${PALETTE[i]};margin-bottom:12px">${esc(biz.name)}</div>`;if(biz.best_dishes?.length){html+=`<label class="lbl">Order these</label>${biz.best_dishes.map(d=>`<div class="dish-row"><span style="color:#1a7a3a;font-size:11px">▲</span>${esc(d)}</div>`).join("")}`;}if(biz.worst_dishes?.length){html+=`<label class="lbl" style="margin-top:12px">Skip these</label>${biz.worst_dishes.map(d=>`<div class="dish-row" style="color:#888"><span style="color:#c00;font-size:11px">▼</span>${esc(d)}</div>`).join("")}`;}if(!biz.best_dishes?.length&&!biz.worst_dishes?.length)html+=`<p style="font-size:12px;color:#bbb">No dish mentions found.</p>`;html+="</div>";});
+  html+="</div>";document.getElementById("tab-dishes").innerHTML=html;
+}
+function renderBenchmark(){
+  const bench=results.benchmark;
+  if(!bench){document.getElementById("tab-benchmark").innerHTML=`<p style="color:#888;font-size:13px">No benchmark data.</p>`;return;}
+  let html=`<h2 style="margin-bottom:1.25rem">Competitive benchmark</h2><div style="padding:1rem 1.25rem;background:#fffbf0;border-radius:12px;border:1px solid #ffe0a0;margin-bottom:1.5rem"><div style="font-size:14px;font-weight:600;color:#a06000;margin-bottom:8px">Top performer: ${esc(bench.winner)}</div><p style="font-size:13px;color:#666;margin-bottom:6px;line-height:1.6">${esc(bench.winner_reason)}</p>${bench.key_differentiator?`<p style="font-size:12px;color:#888">Key differentiator: ${esc(bench.key_differentiator)}</p>`:""}</div><h3 style="font-size:15px;font-weight:600;margin-bottom:12px">Full rankings</h3>`;
+  (bench.rankings||[]).sort((a,b)=>a.rank-b.rank).forEach((r,i)=>{html+=`<div style="display:flex;align-items:flex-start;gap:14px;padding:14px 16px;background:#fff;border-radius:12px;border:1px solid #eee;margin-bottom:10px"><div style="font-size:24px;font-weight:700;color:${PALETTE[i%PALETTE.length]};width:36px;flex-shrink:0;line-height:1">#${r.rank}</div><div style="flex:1"><div style="font-size:14px;font-weight:600;margin-bottom:6px">${esc(r.name)}</div><div style="display:flex;gap:16px;flex-wrap:wrap"><span style="font-size:12px;color:#1a7a3a">+ ${esc(r.strengths)}</span><span style="font-size:12px;color:#c00">– ${esc(r.weaknesses)}</span></div></div><div style="flex-shrink:0;text-align:right;min-width:60px"><div style="font-size:18px;font-weight:700;color:${PALETTE[i%PALETTE.length]}">${r.score}</div><div style="width:60px;height:5px;background:#eee;border-radius:4px;overflow:hidden;margin-top:4px"><div style="width:${r.score}%;height:100%;background:${PALETTE[i%PALETTE.length]};border-radius:4px"></div></div></div></div>`;});
+  document.getElementById("tab-benchmark").innerHTML=html;
+}
+function switchTab(name){["overview","timeline","themes","dishes","benchmark"].forEach((t,i)=>{document.getElementById("tab-"+t).classList[t===name?"remove":"add"]("hidden");document.querySelectorAll(".tab-btn")[i].classList[t===name?"add":"remove"]("active");});if(name==="timeline")updateTimeline();}
+function reset(){results=null;businesses=[{url:"",name:""},{url:"",name:""}];document.getElementById("serp-key").value="";hide("setup-error");hide("loading-error");document.getElementById("log-box").innerHTML="";charts.forEach(c=>c.destroy());charts=[];renderBizList();showScreen("setup");}
+renderBizList();
+</script>
+</body>
+</html>
