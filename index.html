@@ -155,16 +155,25 @@ async function runAnalysis(){
     if(!id){addLog("Could not read URL for: "+label,"error");collected.push({name:label,reviews:[],error:"Bad URL"});collectedMeta.push({name:label});continue;}
     addLog("Fetching reviews (3 pages) for: "+label);
     try{
-      const res=await fetch(`/api/serpapi?data_id=${encodeURIComponent(id)}&api_key=${encodeURIComponent(apiKey)}`);
-      if(!res.ok)throw new Error("HTTP "+res.status);
-      const data=await res.json();
-      if(data.error)throw new Error(data.error);
-      const name=biz.name||data.place_info?.title||label;
-      addLog(`Got ${(data.reviews||[]).length} reviews for: ${name}`,"success");
-      collectedMeta.push({name,thumbnail:data.place_info?.thumbnail||null,address:data.place_info?.address||null,gps:data.place_info?.gps_coordinates||null});
-      collected.push({name,place_info:data.place_info,reviews:data.reviews||[]});
-    }catch(e){addLog("Error for "+label+": "+e.message,"error");collected.push({name:label,reviews:[],error:e.message});collectedMeta.push({name:label});}
+      let allReviews=[],place_info=null,nextToken=null;
+      for(let page=0;page<3;page++){
+        let url=`/api/serpapi?data_id=${encodeURIComponent(id)}&api_key=${encodeURIComponent(apiKey)}`;
+        if(nextToken) url+=`&next_page_token=${encodeURIComponent(nextToken)}`;
+        const res=await fetch(url);
+        if(!res.ok) throw new Error("HTTP "+res.status);
+        const data=await res.json();
+        if(data.error) throw new Error(data.error);
+        if(page===0) place_info=data.place_info;
+        allReviews=allReviews.concat(data.reviews||[]);
+        nextToken=data.next_page_token;
+        addLog(`Page ${page+1}: got ${(data.reviews||[]).length} reviews`,"success");
+        if(!nextToken) break;
   }
+  const name=biz.name||place_info?.title||label;
+  addLog(`Total: ${allReviews.length} reviews for: ${name}`,"success");
+  collectedMeta.push({name,thumbnail:place_info?.thumbnail||null,address:place_info?.address||null,gps:place_info?.gps_coordinates||null});
+  collected.push({name,place_info,reviews:allReviews});
+}catch(e){addLog("Error for "+label+": "+e.message,"error");collected.push({name:label,reviews:[],error:e.message});collectedMeta.push({name:label});}
 
   addLog("Running AI analysis...");
   try{
