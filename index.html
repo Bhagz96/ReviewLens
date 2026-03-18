@@ -1,0 +1,387 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>ReviewLens</title>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/react/18.2.0/umd/react.production.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/react-dom/18.2.0/umd/react-dom.production.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/babel-standalone/7.23.2/babel.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/recharts/2.5.0/Recharts.js"></script>
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif; background: #f9f9f9; color: #1a1a1a; min-height: 100vh; }
+    input, select, button { font-family: inherit; font-size: 13px; border-radius: 8px; border: 1px solid #ddd; padding: 8px 12px; outline: none; background: #fff; color: #1a1a1a; }
+    input:focus, select:focus { border-color: #999; }
+    button { cursor: pointer; background: #fff; transition: background 0.15s; }
+    button:hover { background: #f2f2f2; }
+    button.primary { background: #1a1a1a; color: #fff; border-color: #1a1a1a; font-weight: 500; }
+    button.primary:hover { background: #333; }
+    ::placeholder { color: #aaa; }
+  </style>
+</head>
+<body>
+<div id="root"></div>
+<script type="text/babel">
+const { useState } = React;
+const { BarChart, Bar, LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer, Cell } = Recharts;
+
+const PALETTE = ["#EF9F27","#378ADD","#1D9E75","#D85A30","#7F77DD"];
+const TABS = ["overview","timeline","themes","dishes","benchmark"];
+
+function extractDataId(url) {
+  const m = url.match(/0x[a-f0-9]+:0x[a-f0-9]+/i);
+  return m ? m[0] : null;
+}
+
+async function fetchReviews(dataId, apiKey) {
+  const res = await fetch(`/api/serpapi?data_id=${encodeURIComponent(dataId)}&api_key=${encodeURIComponent(apiKey)}`);
+  if (!res.ok) throw new Error("HTTP " + res.status);
+  const data = await res.json();
+  if (data.error) throw new Error(data.error);
+  return data;
+}
+
+async function analyzeWithClaude(collected) {
+  const prompt = `You are a business analyst. Analyze these Google Maps review datasets. Today is March 2026. Return ONLY valid JSON, no markdown, no backticks.
+
+${JSON.stringify(collected.map(b => ({name:b.name, place_info:b.place_info, reviews:(b.reviews||[]).slice(0,20)})))}
+
+Return exactly:
+{"businesses":[{"name":"string","overall_rating":4.2,"total_reviews":628,"price_range":"$30-40","ratings_by_year":[{"year":"2025","avg_rating":4.1,"count":12}],"positive_themes":["theme1","theme2","theme3"],"negative_themes":["theme1","theme2"],"best_dishes":["dish1","dish2"],"worst_dishes":["dish1"],"one_line_summary":"string"}],"benchmark":{"winner":"name","winner_reason":"string","rankings":[{"name":"string","rank":1,"score":87,"strengths":"string","weaknesses":"string"}],"common_positives":["theme"],"common_negatives":["theme"],"key_differentiator":"string"}}
+
+Rules: parse relative dates (3 weeks ago=2026,6 months ago=2025,a year ago=2025,2 years ago=2024,3 years ago=2023). best_dishes only from 4-5 star reviews. worst_dishes only from 1-2 star reviews. score is 0-100.`;
+
+  const res = await fetch("https://api.anthropic.com/v1/messages", {
+    method:"POST",
+    headers:{"Content-Type":"application/json"},
+    body: JSON.stringify({model:"claude-sonnet-4-20250514", max_tokens:4000, messages:[{role:"user",content:prompt}]})
+  });
+  const data = await res.json();
+  if (data.error) throw new Error(data.error.message || JSON.stringify(data.error));
+  const text = data.content[0].text;
+  return JSON.parse(text.replace(/```json\n?/g,"").replace(/```\n?/g,"").trim());
+}
+
+const s = {
+  card: { background:"#fff", borderRadius:12, padding:"1rem 1.25rem", border:"1px solid #eee" },
+  cardTop: (color) => ({ background:"#fff", borderRadius:12, padding:"1rem 1.25rem", border:"1px solid #eee", borderTop:`3px solid ${color}` }),
+  lbl: { fontSize:11, fontWeight:600, color:"#888", textTransform:"uppercase", letterSpacing:"0.5px", marginBottom:8, display:"block" },
+  pill: (bg, color) => ({ fontSize:11, padding:"3px 10px", borderRadius:20, background:bg, color }),
+};
+
+function App() {
+  const [step, setStep] = useState("setup");
+  const [apiKey, setApiKey] = useState("");
+  const [businesses, setBusinesses] = useState([{url:"",name:""},{url:"",name:""}]);
+  const [logs, setLogs] = useState([]);
+  const [results, setResults] = useState(null);
+  const [tab, setTab] = useState("overview");
+  const [yearFilter, setYearFilter] = useState("all");
+  const [error, setError] = useState("");
+
+  const addLog = (msg, type="info") => setLogs(p => [...p, {msg, type, t:new Date().toLocaleTimeString()}]);
+
+  const runAnalysis = async () => {
+    setError(""); setLogs([]);
+    const valid = businesses.filter(b => b.url.trim());
+    if (!apiKey.trim()) return setError("Please enter your SerpAPI key.");
+    if (!valid.length) return setError("Please enter at least one Google Maps URL.");
+    setStep("loading");
+    const collected = [];
+
+    for (let i = 0; i < valid.length; i++) {
+      const biz = valid[i];
+      const label = biz.name || ("Business "+(i+1));
+      addLog("Processing: " + label);
+      const id = extractDataId(biz.url);
+      if (!id) {
+        addLog("Could not read URL for: " + label, "error");
+        collected.push({name:label, reviews:[], error:"Bad URL"});
+        continue;
+      }
+      addLog("Fetching reviews for: " + label);
+      try {
+        const d = await fetchReviews(id, apiKey);
+        const count = (d.reviews||[]).length;
+        const name = biz.name || d.place_info?.title || label;
+        addLog(`Got ${count} reviews for: ${name}`, "success");
+        collected.push({name, place_info:d.place_info, reviews:d.reviews||[]});
+      } catch(e) {
+        addLog("Error for " + label + ": " + e.message, "error");
+        collected.push({name:label, reviews:[], error:e.message});
+      }
+    }
+
+    addLog("Running AI analysis...");
+    try {
+      const analysis = await analyzeWithClaude(collected);
+      setResults(analysis);
+      setStep("results");
+    } catch(e) {
+      addLog("AI analysis failed: " + e.message, "error");
+      setError("Analysis failed. Check your API keys and try again.");
+    }
+  };
+
+  const reset = () => { setStep("setup"); setResults(null); setTab("overview"); setYearFilter("all"); setError(""); setLogs([]); };
+
+  if (step === "setup") return (
+    <div style={{maxWidth:600, margin:"0 auto", padding:"3rem 1.5rem"}}>
+      <h1 style={{fontSize:28, fontWeight:700, marginBottom:6}}>ReviewLens</h1>
+      <p style={{color:"#666", fontSize:15, marginBottom:"2rem"}}>AI-powered competitive intelligence from Google Maps reviews</p>
+
+      <div style={{...s.card, marginBottom:12}}>
+        <label style={s.lbl}>Your SerpAPI key</label>
+        <input type="password" value={apiKey} onChange={e=>setApiKey(e.target.value)} placeholder="Paste your SerpAPI key here..." style={{width:"100%"}}/>
+        <p style={{fontSize:11, color:"#aaa", marginTop:6}}>Get a free key at serpapi.com (100 free searches)</p>
+      </div>
+
+      <div style={{...s.card, marginBottom:16}}>
+        <div style={{display:"flex", justifyContent:"space-between", alignItems:"center", marginBottom:12}}>
+          <label style={{...s.lbl, margin:0}}>Businesses to compare (up to 5)</label>
+          {businesses.length < 5 && (
+            <button onClick={()=>setBusinesses(p=>[...p,{url:"",name:""}])} style={{fontSize:12, padding:"4px 10px"}}>+ Add business</button>
+          )}
+        </div>
+        {businesses.map((b,i) => (
+          <div key={i} style={{display:"flex", gap:8, marginBottom:10, alignItems:"center"}}>
+            <div style={{width:10, height:10, borderRadius:"50%", background:PALETTE[i], flexShrink:0}}/>
+            <input value={b.name} onChange={e=>setBusinesses(p=>p.map((x,j)=>j===i?{...x,name:e.target.value}:x))} placeholder="Business name" style={{width:140, flexShrink:0}}/>
+            <input value={b.url} onChange={e=>setBusinesses(p=>p.map((x,j)=>j===i?{...x,url:e.target.value}:x))} placeholder="Paste Google Maps URL..." style={{flex:1}}/>
+            {businesses.length > 2 && (
+              <button onClick={()=>setBusinesses(p=>p.filter((_,j)=>j!==i))} style={{fontSize:18, padding:"0 8px", border:"none", background:"none", color:"#bbb"}}>×</button>
+            )}
+          </div>
+        ))}
+      </div>
+
+      {error && <div style={{padding:"10px 14px", background:"#fff0f0", borderRadius:8, fontSize:13, color:"#c00", marginBottom:12}}>{error}</div>}
+      <button className="primary" onClick={runAnalysis} style={{width:"100%", padding:"13px", fontSize:15}}>Analyze reviews →</button>
+    </div>
+  );
+
+  if (step === "loading") return (
+    <div style={{maxWidth:520, margin:"0 auto", padding:"3rem 1.5rem"}}>
+      <h2 style={{fontSize:20, fontWeight:600, marginBottom:6}}>Analysing reviews</h2>
+      <p style={{color:"#888", fontSize:13, marginBottom:20}}>This takes about 15–30 seconds. Watch the log below.</p>
+      <div style={{background:"#111", borderRadius:12, padding:"1rem 1.25rem", fontFamily:"monospace", fontSize:12, maxHeight:320, overflowY:"auto"}}>
+        {logs.length===0 && <span style={{color:"#555"}}>Starting...</span>}
+        {logs.map((l,i)=>(
+          <div key={i} style={{marginBottom:5, color:l.type==="error"?"#f09595":l.type==="success"?"#5DCAA5":"#aaa"}}>
+            <span style={{color:"#555", marginRight:8}}>{l.t}</span>{l.msg}
+          </div>
+        ))}
+      </div>
+      {error && <div style={{padding:"10px 14px", background:"#fff0f0", borderRadius:8, fontSize:13, color:"#c00", marginTop:12}}>
+        {error}<br/><button onClick={reset} style={{marginTop:8, fontSize:12}}>← Try again</button>
+      </div>}
+    </div>
+  );
+
+  const bizs = results?.businesses || [];
+  const bench = results?.benchmark;
+  const allYears = [...new Set(bizs.flatMap(b=>(b.ratings_by_year||[]).map(r=>r.year)))].sort();
+
+  return (
+    <div>
+      <div style={{display:"flex", alignItems:"center", gap:8, padding:"0 1.5rem", height:52, borderBottom:"1px solid #eee", background:"#fff", position:"sticky", top:0, zIndex:10}}>
+        <span style={{fontSize:15, fontWeight:700, marginRight:8}}>ReviewLens</span>
+        <div style={{display:"flex", gap:2, flex:1, overflowX:"auto"}}>
+          {TABS.map(t=>(
+            <button key={t} onClick={()=>setTab(t)} style={{padding:"5px 14px", fontSize:13, borderRadius:20, background:tab===t?"#1a1a1a":"transparent", color:tab===t?"#fff":"#666", border:tab===t?"1px solid #1a1a1a":"1px solid transparent", whiteSpace:"nowrap"}}>
+              {t.charAt(0).toUpperCase()+t.slice(1)}
+            </button>
+          ))}
+        </div>
+        <button onClick={reset} style={{fontSize:12, padding:"5px 12px", whiteSpace:"nowrap"}}>← New search</button>
+      </div>
+
+      <div style={{maxWidth:1000, margin:"0 auto", padding:"1.5rem 1.5rem"}}>
+
+        {tab==="overview" && (
+          <div>
+            <h2 style={{marginBottom:"1.25rem"}}>Overview</h2>
+            <div style={{display:"grid", gridTemplateColumns:"repeat(auto-fill,minmax(200px,1fr))", gap:12, marginBottom:"1.5rem"}}>
+              {bizs.map((biz,i)=>(
+                <div key={i} style={s.cardTop(PALETTE[i])}>
+                  <div style={{fontSize:13, fontWeight:600, color:PALETTE[i], marginBottom:8}}>{biz.name}</div>
+                  <div style={{display:"flex", alignItems:"baseline", gap:6, marginBottom:4}}>
+                    <span style={{fontSize:30, fontWeight:700}}>{biz.overall_rating?.toFixed(1)}</span>
+                    <span style={{fontSize:13, color:"#aaa"}}>/5</span>
+                  </div>
+                  <div style={{fontSize:12, color:"#888", marginBottom:10}}>{(biz.total_reviews||0).toLocaleString()} reviews</div>
+                  <p style={{fontSize:12, color:"#666", lineHeight:1.6, marginBottom:10}}>{biz.one_line_summary}</p>
+                  <div style={{display:"flex", gap:6, flexWrap:"wrap"}}>
+                    {biz.price_range && <span style={s.pill("#f5f5f5","#666")}>{biz.price_range}</span>}
+                    {bench?.winner===biz.name && <span style={s.pill("#fff8e6","#a06000")}>Top rated</span>}
+                  </div>
+                </div>
+              ))}
+            </div>
+            <div style={s.card}>
+              <label style={s.lbl}>Rating comparison</label>
+              <ResponsiveContainer width="100%" height={220}>
+                <BarChart data={bizs.map(b=>({name:b.name, rating:b.overall_rating}))} margin={{top:0,right:8,bottom:0,left:-20}}>
+                  <CartesianGrid strokeDasharray="3 3" stroke="#f0f0f0"/>
+                  <XAxis dataKey="name" tick={{fontSize:11}}/>
+                  <YAxis domain={[0,5]} tick={{fontSize:11}} tickCount={6}/>
+                  <Tooltip formatter={v=>[v?.toFixed(1),"Rating"]}/>
+                  <Bar dataKey="rating" radius={[4,4,0,0]}>{bizs.map((_,i)=><Cell key={i} fill={PALETTE[i]}/>)}</Bar>
+                </BarChart>
+              </ResponsiveContainer>
+            </div>
+          </div>
+        )}
+
+        {tab==="timeline" && (
+          <div>
+            <div style={{display:"flex", justifyContent:"space-between", alignItems:"center", marginBottom:"1.25rem"}}>
+              <h2>Ratings over time</h2>
+              <select value={yearFilter} onChange={e=>setYearFilter(e.target.value)}>
+                <option value="all">All years</option>
+                {allYears.map(y=><option key={y} value={y}>{y}</option>)}
+              </select>
+            </div>
+            {yearFilter==="all" ? (
+              <div style={s.card}>
+                {allYears.length>0 ? (
+                  <ResponsiveContainer width="100%" height={300}>
+                    <LineChart data={allYears.map(year=>{
+                      const entry={year};
+                      bizs.forEach(b=>{const yr=b.ratings_by_year?.find(r=>r.year===year); if(yr) entry[b.name]=parseFloat(yr.avg_rating?.toFixed(2));});
+                      return entry;
+                    })}>
+                      <CartesianGrid strokeDasharray="3 3" stroke="#f0f0f0"/>
+                      <XAxis dataKey="year" tick={{fontSize:11}}/>
+                      <YAxis domain={[1,5]} tick={{fontSize:11}} tickCount={5}/>
+                      <Tooltip formatter={v=>[v?.toFixed(1),"Avg rating"]}/>
+                      <Legend wrapperStyle={{fontSize:12}}/>
+                      {bizs.map((b,i)=><Line key={b.name} type="monotone" dataKey={b.name} stroke={PALETTE[i]} strokeWidth={2} dot={{r:4,fill:PALETTE[i]}} connectNulls/>)}
+                    </LineChart>
+                  </ResponsiveContainer>
+                ) : <p style={{fontSize:13,color:"#888"}}>Not enough data to show yearly trends.</p>}
+              </div>
+            ) : (
+              <div style={{display:"grid", gridTemplateColumns:"repeat(auto-fill,minmax(200px,1fr))", gap:12}}>
+                {bizs.map((biz,i)=>{
+                  const yr=biz.ratings_by_year?.find(r=>r.year===yearFilter);
+                  return (
+                    <div key={i} style={s.cardTop(PALETTE[i])}>
+                      <div style={{fontSize:13,fontWeight:600,color:PALETTE[i],marginBottom:8}}>{biz.name}</div>
+                      <div style={{fontSize:30,fontWeight:700,marginBottom:4}}>{yr?yr.avg_rating?.toFixed(1):"–"}</div>
+                      <div style={{fontSize:12,color:"#888"}}>{yr?(yr.count+" reviews in "+yearFilter):"No data for "+yearFilter}</div>
+                    </div>
+                  );
+                })}
+              </div>
+            )}
+          </div>
+        )}
+
+        {tab==="themes" && (
+          <div>
+            <h2 style={{marginBottom:"1.25rem"}}>Sentiment themes</h2>
+            {bench?.common_positives?.length>0 && (
+              <div style={{padding:"10px 14px", background:"#f0faf4", borderRadius:8, marginBottom:8, fontSize:13}}>
+                <strong style={{color:"#1a7a3a"}}>Shared strengths: </strong><span style={{color:"#555"}}>{bench.common_positives.join(" · ")}</span>
+              </div>
+            )}
+            {bench?.common_negatives?.length>0 && (
+              <div style={{padding:"10px 14px", background:"#fff0f0", borderRadius:8, marginBottom:"1.25rem", fontSize:13}}>
+                <strong style={{color:"#c00"}}>Common complaints: </strong><span style={{color:"#555"}}>{bench.common_negatives.join(" · ")}</span>
+              </div>
+            )}
+            <div style={{display:"grid", gridTemplateColumns:"repeat(auto-fill,minmax(220px,1fr))", gap:12}}>
+              {bizs.map((biz,i)=>(
+                <div key={i} style={s.cardTop(PALETTE[i])}>
+                  <div style={{fontSize:13,fontWeight:600,color:PALETTE[i],marginBottom:12}}>{biz.name}</div>
+                  <label style={s.lbl}>What people love</label>
+                  <div style={{display:"flex",flexWrap:"wrap",gap:6,marginBottom:14}}>
+                    {(biz.positive_themes||[]).map((t,j)=><span key={j} style={s.pill("#f0faf4","#1a7a3a")}>{t}</span>)}
+                  </div>
+                  <label style={s.lbl}>Pain points</label>
+                  <div style={{display:"flex",flexWrap:"wrap",gap:6}}>
+                    {(biz.negative_themes||[]).map((t,j)=><span key={j} style={s.pill("#fff0f0","#c00")}>{t}</span>)}
+                  </div>
+                </div>
+              ))}
+            </div>
+          </div>
+        )}
+
+        {tab==="dishes" && (
+          <div>
+            <h2 style={{marginBottom:4}}>Menu intelligence</h2>
+            <p style={{fontSize:13, color:"#888", marginBottom:"1.25rem"}}>Best dishes from 4–5★ reviews only. Items to avoid from 1–2★ reviews.</p>
+            <div style={{display:"grid", gridTemplateColumns:"repeat(auto-fill,minmax(220px,1fr))", gap:12}}>
+              {bizs.map((biz,i)=>(
+                <div key={i} style={s.cardTop(PALETTE[i])}>
+                  <div style={{fontSize:13,fontWeight:600,color:PALETTE[i],marginBottom:12}}>{biz.name}</div>
+                  {biz.best_dishes?.length>0 && (
+                    <div style={{marginBottom:12}}>
+                      <label style={s.lbl}>Order these</label>
+                      {biz.best_dishes.map((d,j)=>(
+                        <div key={j} style={{display:"flex",alignItems:"center",gap:8,padding:"7px 0",borderBottom:"1px solid #f5f5f5",fontSize:13}}>
+                          <span style={{color:"#1a7a3a",fontSize:11}}>▲</span>{d}
+                        </div>
+                      ))}
+                    </div>
+                  )}
+                  {biz.worst_dishes?.length>0 && (
+                    <div>
+                      <label style={s.lbl}>Skip these</label>
+                      {biz.worst_dishes.map((d,j)=>(
+                        <div key={j} style={{display:"flex",alignItems:"center",gap:8,padding:"7px 0",borderBottom:"1px solid #f5f5f5",fontSize:13,color:"#888"}}>
+                          <span style={{color:"#c00",fontSize:11}}>▼</span>{d}
+                        </div>
+                      ))}
+                    </div>
+                  )}
+                  {!biz.best_dishes?.length && !biz.worst_dishes?.length && (
+                    <p style={{fontSize:12,color:"#aaa"}}>No dish mentions found in reviews.</p>
+                  )}
+                </div>
+              ))}
+            </div>
+          </div>
+        )}
+
+        {tab==="benchmark" && bench && (
+          <div>
+            <h2 style={{marginBottom:"1.25rem"}}>Competitive benchmark</h2>
+            <div style={{padding:"1rem 1.25rem", background:"#fffbf0", borderRadius:12, border:"1px solid #ffe0a0", marginBottom:"1.5rem"}}>
+              <div style={{fontSize:14,fontWeight:600,color:"#a06000",marginBottom:8}}>Top performer: {bench.winner}</div>
+              <p style={{fontSize:13,color:"#666",marginBottom:6,lineHeight:1.6}}>{bench.winner_reason}</p>
+              {bench.key_differentiator && <p style={{fontSize:12,color:"#888"}}>Key differentiator: {bench.key_differentiator}</p>}
+            </div>
+            <h3 style={{fontSize:15,fontWeight:600,marginBottom:12}}>Full rankings</h3>
+            {(bench.rankings||[]).sort((a,b)=>a.rank-b.rank).map((r,i)=>(
+              <div key={i} style={{display:"flex",alignItems:"flex-start",gap:14,padding:"14px 16px",background:"#fff",borderRadius:12,border:"1px solid #eee",marginBottom:10}}>
+                <div style={{fontSize:24,fontWeight:700,color:PALETTE[i%PALETTE.length],width:36,flexShrink:0,lineHeight:1}}>#{r.rank}</div>
+                <div style={{flex:1}}>
+                  <div style={{fontSize:14,fontWeight:600,marginBottom:6}}>{r.name}</div>
+                  <div style={{display:"flex",gap:16,flexWrap:"wrap"}}>
+                    <span style={{fontSize:12,color:"#1a7a3a"}}>+ {r.strengths}</span>
+                    <span style={{fontSize:12,color:"#c00"}}>– {r.weaknesses}</span>
+                  </div>
+                </div>
+                <div style={{flexShrink:0,textAlign:"right",minWidth:60}}>
+                  <div style={{fontSize:18,fontWeight:700,color:PALETTE[i%PALETTE.length],marginBottom:6}}>{r.score}</div>
+                  <div style={{width:60,height:5,background:"#eee",borderRadius:4,overflow:"hidden"}}>
+                    <div style={{width:r.score+"%",height:"100%",background:PALETTE[i%PALETTE.length],borderRadius:4}}/>
+                  </div>
+                </div>
+              </div>
+            ))}
+          </div>
+        )}
+      </div>
+    </div>
+  );
+}
+
+ReactDOM.render(<App/>, document.getElementById("root"));
+</script>
+</body>
+</html>
