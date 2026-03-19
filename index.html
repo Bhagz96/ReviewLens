@@ -5,28 +5,28 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>ReviewLens</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
-<link href="https://fonts.googleapis.com/css2?family=Lora:ital,wght@0,400;0,500;0,600;1,400;1,500&family=Figtree:wght@300;400;500;600&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Source+Serif+4:ital,wght@0,300;0,400;0,600;1,300;1,400&family=IBM+Plex+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
 <style>
 *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
  
 :root {
-  --ink:        #0f1623;
-  --ink-mid:    #162032;
-  --ink-card:   #1b2840;
-  --border:     rgba(255,255,255,0.08);
-  --accent:     #4f8ef7;
-  --accent-lt:  #a8c8fc;
-  --accent-dim: rgba(79,142,247,0.1);
-  --t1:         #e8edf8;
-  --t2:         rgba(232,237,248,0.5);
-  --t3:         rgba(232,237,248,0.26);
-  --green:  #2dd4a0;
-  --amber:  #f9bc4a;
-  --red:    #f27272;
+  --ink:        #0d1829;
+  --ink-mid:    #141e30;
+  --ink-card:   #1a2640;
+  --border:     rgba(255,255,255,0.07);
+  --accent:     #3b82f6;
+  --accent-lt:  #93c5fd;
+  --accent-dim: rgba(59,130,246,0.1);
+  --t1: #eef2ff;
+  --t2: rgba(238,242,255,0.52);
+  --t3: rgba(238,242,255,0.28);
+  --green: #34d399;
+  --amber: #fbbf24;
+  --red:   #f87171;
   --r:  6px;
   --rl: 10px;
-  --serif: 'Lora', Georgia, serif;
-  --sans:  'Figtree', system-ui, sans-serif;
+  --serif: 'Source Serif 4', Georgia, serif;
+  --sans:  'IBM Plex Sans', system-ui, sans-serif;
 }
  
 body {
@@ -38,156 +38,126 @@ body {
   -webkit-font-smoothing: antialiased;
 }
  
-/* ━━ HERO ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ */
+/* ── HERO ── */
 .hero {
   display: grid;
   grid-template-columns: 1fr 1fr;
   border-bottom: 1px solid var(--border);
 }
  
-/* LEFT */
 .hl {
-  padding: 44px 50px 40px 54px;
-  border-right: 1px solid var(--border);
+  padding: 40px 48px 36px 52px;
   display: flex;
   flex-direction: column;
-  gap: 0;
+  justify-content: space-between;
+  border-right: 1px solid var(--border);
 }
  
 .eyebrow {
   font-size: 10px;
-  font-weight: 600;
-  letter-spacing: 0.14em;
   text-transform: uppercase;
+  letter-spacing: 0.12em;
   color: var(--accent-lt);
-  margin-bottom: 12px;
+  font-weight: 600;
+  margin-bottom: 10px;
   opacity: 0.7;
 }
  
 h1 {
   font-family: var(--serif);
-  font-size: 30px;
-  font-weight: 500;
-  line-height: 1.2;
-  letter-spacing: -0.2px;
-  color: var(--t1);
-  margin-bottom: 12px;
+  font-size: 32px;
+  font-weight: 600;
+  line-height: 1.15;
+  letter-spacing: -0.3px;
+  margin-bottom: 10px;
 }
  
-h1 em {
-  font-style: italic;
-  color: var(--accent-lt);
-  font-weight: 400;
-}
+h1 em { font-style: italic; font-weight: 300; color: var(--accent-lt); }
  
 .subtitle {
-  font-size: 13px;
-  font-weight: 300;
+  font-size: 12.5px;
   color: var(--t2);
   line-height: 1.7;
-  max-width: 340px;
-  margin-bottom: 22px;
+  max-width: 360px;
+  margin-bottom: 18px;
+  font-weight: 300;
 }
  
-/* Feature grid — 2 cols */
-.feat-grid {
+.feats {
   display: grid;
   grid-template-columns: 1fr 1fr;
-  gap: 8px 16px;
-  margin-bottom: 24px;
+  gap: 7px 16px;
+  margin-bottom: 20px;
 }
  
 .feat {
-  display: flex;
-  align-items: flex-start;
-  gap: 8px;
   font-size: 12px;
-  font-weight: 300;
   color: var(--t2);
-  line-height: 1.5;
-}
- 
-.feat-icon {
-  width: 16px;
-  height: 16px;
-  border-radius: 4px;
-  flex-shrink: 0;
-  margin-top: 1px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-}
- 
-.fi-blue   { background: rgba(79,142,247,0.18); }
-.fi-green  { background: rgba(45,212,160,0.18); }
-.fi-amber  { background: rgba(249,188,74,0.18);  }
-.fi-red    { background: rgba(242,114,114,0.18); }
- 
-.feat-icon svg { width: 8px; height: 8px; }
- 
-/* Testimonial */
-.testi {
-  background: rgba(255,255,255,0.03);
-  border: 1px solid var(--border);
-  border-left: 2px solid rgba(168,200,252,0.3);
-  border-radius: 0 var(--r) var(--r) 0;
-  padding: 12px 14px;
-  margin-bottom: 24px;
-}
- 
-.testi-q {
-  font-family: var(--serif);
-  font-style: italic;
-  font-weight: 400;
-  font-size: 12.5px;
-  color: rgba(232,237,248,0.65);
-  line-height: 1.7;
-  margin-bottom: 9px;
-}
- 
-.testi-who {
+  font-weight: 300;
   display: flex;
   align-items: center;
   gap: 7px;
 }
  
-.testi-av {
-  width: 20px;
-  height: 20px;
+.fdot {
+  width: 4px; height: 4px;
   border-radius: 50%;
-  background: rgba(79,142,247,0.15);
-  border: 1px solid rgba(168,200,252,0.2);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  font-size: 8px;
-  font-weight: 600;
-  color: var(--accent-lt);
   flex-shrink: 0;
 }
  
-.testi-name { font-size: 11px; font-weight: 500; color: var(--t2); }
-.testi-role { font-size: 10.5px; color: var(--t3); font-weight: 300; }
+.testi {
+  border-left: 2px solid rgba(147,197,253,0.2);
+  padding: 9px 0 9px 15px;
+  margin-top: 4px;
+}
  
-/* Stats */
+.tq {
+  font-family: var(--serif);
+  font-style: italic;
+  font-weight: 300;
+  font-size: 12.5px;
+  color: rgba(238,242,255,0.62);
+  line-height: 1.7;
+  margin-bottom: 8px;
+}
+ 
+.tauth {
+  display: flex;
+  align-items: center;
+  gap: 7px;
+}
+ 
+.tav {
+  width: 20px; height: 20px;
+  border-radius: 50%;
+  background: rgba(147,197,253,0.1);
+  border: 1px solid rgba(147,197,253,0.18);
+  display: flex; align-items: center; justify-content: center;
+  font-size: 8.5px; font-weight: 600; color: var(--accent-lt);
+  flex-shrink: 0;
+}
+ 
+.tname { font-size: 11px; font-weight: 500; color: var(--t2); }
+.trole { font-size: 10px; color: var(--t3); font-weight: 300; }
+ 
 .stats {
   display: flex;
   border-top: 1px solid var(--border);
-  padding-top: 18px;
-  margin-top: auto;
+  padding-top: 16px;
+  margin-top: 20px;
 }
  
-.stat        { flex: 1; }
-.stat + .stat { border-left: 1px solid var(--border); padding-left: 20px; }
+.stat { flex: 1; padding-right: 18px; }
+.stat + .stat { padding-left: 18px; border-left: 1px solid var(--border); }
  
 .stat-n {
   font-family: var(--serif);
-  font-size: 26px;
-  font-weight: 500;
+  font-size: 22px;
+  font-weight: 600;
   color: var(--accent-lt);
+  letter-spacing: -0.5px;
   line-height: 1;
   margin-bottom: 3px;
-  letter-spacing: -0.5px;
 }
  
 .stat-l {
@@ -195,51 +165,51 @@ h1 em {
   text-transform: uppercase;
   letter-spacing: 0.1em;
   color: var(--t3);
-  font-weight: 600;
+  font-weight: 500;
 }
  
-/* RIGHT — form */
+/* ── FORM ── */
 .hr {
-  padding: 36px 44px;
-  background: var(--ink-mid);
+  padding: 34px 44px;
   display: flex;
   flex-direction: column;
   justify-content: center;
+  background: var(--ink-mid);
 }
  
 .panel-h {
   font-family: var(--serif);
   font-size: 16px;
-  font-weight: 500;
+  font-weight: 600;
   margin-bottom: 3px;
 }
  
 .panel-s {
   font-size: 11.5px;
   color: var(--t3);
+  margin-bottom: 20px;
   font-weight: 300;
-  margin-bottom: 22px;
 }
  
 .lbl {
-  display: block;
   font-size: 9.5px;
   text-transform: uppercase;
-  letter-spacing: 0.12em;
+  letter-spacing: 0.1em;
   color: var(--t3);
   font-weight: 600;
-  margin-bottom: 6px;
+  margin-bottom: 5px;
+  display: block;
 }
  
 .hint {
   font-size: 10.5px;
   color: var(--t3);
-  font-weight: 300;
   margin-top: 4px;
-  margin-bottom: 16px;
+  margin-bottom: 14px;
+  font-weight: 300;
 }
  
-input {
+input[type="text"] {
   width: 100%;
   height: 36px;
   background: var(--ink-card);
@@ -249,51 +219,54 @@ input {
   font-family: var(--sans);
   font-size: 12px;
   font-weight: 300;
-  padding: 0 12px;
+  padding: 0 11px;
   outline: none;
   transition: border-color 0.15s;
 }
  
-input::placeholder { color: var(--t3); }
-input:focus        { border-color: rgba(79,142,247,0.45); }
+input[type="text"]::placeholder { color: var(--t3); }
+input[type="text"]:focus { border-color: rgba(59,130,246,0.45); }
  
 .row-hd {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  margin-bottom: 5px;
+  margin-bottom: 4px;
 }
  
 .add {
   font-size: 10.5px;
   color: var(--accent-lt);
   background: var(--accent-dim);
-  border: 1px solid rgba(168,200,252,0.12);
+  border: 1px solid rgba(147,197,253,0.14);
   border-radius: var(--r);
   padding: 3px 9px;
   cursor: pointer;
   font-family: var(--sans);
   font-weight: 500;
+  transition: background 0.15s;
 }
+.add:hover { background: rgba(59,130,246,0.18); }
+ 
+.brows { display: flex; flex-direction: column; gap: 6px; margin-bottom: 2px; }
  
 .brow {
   display: grid;
   grid-template-columns: 118px 1fr;
   gap: 6px;
-  margin-bottom: 6px;
+  align-items: center;
 }
  
 .brow-l {
   display: grid;
-  grid-template-columns: 8px 1fr;
+  grid-template-columns: 10px 1fr;
   align-items: center;
-  gap: 6px;
+  gap: 5px;
 }
  
-.bdot { width: 6px; height: 6px; border-radius: 50%; }
+.bdot { width: 6px; height: 6px; border-radius: 50%; flex-shrink: 0; }
  
 .run {
-  margin-top: 14px;
   width: 100%;
   height: 40px;
   background: var(--accent);
@@ -304,27 +277,45 @@ input:focus        { border-color: rgba(79,142,247,0.45); }
   font-size: 13px;
   font-weight: 500;
   cursor: pointer;
-  letter-spacing: 0.01em;
-  transition: background 0.15s;
+  margin-top: 13px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  transition: background 0.15s, opacity 0.15s;
 }
-.run:hover { background: #3b7ef0; }
+.run:hover { background: #2563eb; }
+.run:disabled { opacity: 0.5; cursor: not-allowed; }
  
-/* ━━ BOTTOM ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ */
+/* ── ERROR BAR ── */
+.err-bar {
+  background: rgba(242,114,114,0.12);
+  border: 1px solid rgba(242,114,114,0.25);
+  border-radius: var(--r);
+  padding: 8px 12px;
+  font-size: 11.5px;
+  color: #fca5a5;
+  margin-top: 10px;
+  font-weight: 300;
+  display: none;
+}
+ 
+/* ── BOTTOM ── */
 .bottom {
   display: grid;
-  grid-template-columns: 1fr 1.45fr;
-  background: #f4f5f8;
+  grid-template-columns: 1fr 1.4fr;
+  background: #f5f6f8;
   color: #18243a;
 }
  
-.how  { padding: 36px 44px; border-right: 1px solid #dfe3ee; }
-.out  { padding: 36px 44px; }
+.how { padding: 34px 44px; border-right: 1px solid #e0e4ee; }
+.out  { padding: 34px 44px; }
  
 .sec-eye {
   font-size: 9.5px;
   text-transform: uppercase;
-  letter-spacing: 0.14em;
-  color: #8898bb;
+  letter-spacing: 0.12em;
+  color: #8492b0;
   font-weight: 600;
   margin-bottom: 4px;
 }
@@ -332,19 +323,19 @@ input:focus        { border-color: rgba(79,142,247,0.45); }
 .sec-h {
   font-family: var(--serif);
   font-size: 19px;
-  font-weight: 500;
+  font-weight: 600;
   color: #18243a;
   margin-bottom: 3px;
+  letter-spacing: -0.2px;
 }
  
 .sec-s {
   font-size: 12px;
-  color: #8898bb;
-  font-weight: 300;
+  color: #8492b0;
   margin-bottom: 22px;
+  font-weight: 300;
 }
  
-/* Steps */
 .steps { display: flex; flex-direction: column; }
  
 .step {
@@ -355,12 +346,12 @@ input:focus        { border-color: rgba(79,142,247,0.45); }
   position: relative;
 }
  
-.step:not(:last-child)::after {
+.step:not(:last-child)::before {
   content: '';
   position: absolute;
   left: 11px; top: 24px; bottom: 0;
   width: 1px;
-  background: #dce0eb;
+  background: #dde2ee;
 }
  
 .sn {
@@ -370,35 +361,53 @@ input:focus        { border-color: rgba(79,142,247,0.45); }
   color: #fff;
   font-size: 10.5px;
   font-weight: 600;
+  display: flex; align-items: center; justify-content: center;
+  flex-shrink: 0;
+  position: relative; z-index: 1;
+}
+ 
+.sh { font-size: 12.5px; font-weight: 600; color: #18243a; margin-bottom: 2px; padding-top: 3px; }
+.sd { font-size: 11.5px; color: #7a89a8; line-height: 1.65; font-weight: 300; }
+ 
+/* ── RESULTS AREA ── */
+#results-area { min-height: 0; }
+ 
+.loading-state {
   display: flex;
+  flex-direction: column;
   align-items: center;
   justify-content: center;
-  flex-shrink: 0;
-  position: relative;
-  z-index: 1;
+  padding: 32px 0;
+  gap: 10px;
 }
  
-.sh {
-  font-size: 12.5px;
-  font-weight: 600;
-  color: #18243a;
-  margin-bottom: 2px;
-  padding-top: 3px;
+.spinner {
+  width: 24px; height: 24px;
+  border: 2px solid #e0e4ee;
+  border-top-color: #3b82f6;
+  border-radius: 50%;
+  animation: spin 0.8s linear infinite;
 }
  
-.sd {
-  font-size: 11.5px;
-  color: #7a8bab;
-  line-height: 1.65;
+@keyframes spin { to { transform: rotate(360deg); } }
+ 
+.loading-label {
+  font-size: 12px;
+  color: #8492b0;
   font-weight: 300;
 }
  
-/* Business cards */
+.loading-step {
+  font-size: 11px;
+  color: #b0bacf;
+  font-weight: 300;
+}
+ 
+/* cards */
 .bcards {
   display: grid;
-  grid-template-columns: repeat(3, 1fr);
   gap: 8px;
-  margin-bottom: 9px;
+  margin-bottom: 10px;
 }
  
 .bc {
@@ -409,40 +418,23 @@ input:focus        { border-color: rgba(79,142,247,0.45); }
   padding: 12px 13px;
 }
  
-.bc.p { border-top-color: #4f8ef7; }
-.bc.g { border-top-color: #2dd4a0; }
-.bc.k { border-top-color: #f9bc4a; }
- 
 .bc-hd {
-  display: flex;
-  align-items: center;
-  gap: 7px;
+  display: flex; align-items: center; gap: 7px;
   margin-bottom: 8px;
 }
  
 .bav {
   width: 24px; height: 24px;
   border-radius: 5px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  font-size: 10px;
-  font-weight: 700;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 10px; font-weight: 700;
   flex-shrink: 0;
+  color: #fff;
 }
- 
-.bav.s { background: #dbeafe; color: #1d4ed8; }
-.bav.g { background: #ccfbef; color: #065f46; }
-.bav.k { background: #fef3c7; color: #92400e; }
  
 .bn { font-size: 11px; font-weight: 600; color: #18243a; line-height: 1.25; }
  
-.br {
-  display: flex;
-  align-items: baseline;
-  gap: 2px;
-  margin-bottom: 1px;
-}
+.br { display: flex; align-items: baseline; gap: 2px; margin-bottom: 1px; }
  
 .rv {
   font-family: var(--serif);
@@ -453,37 +445,37 @@ input:focus        { border-color: rgba(79,142,247,0.45); }
   line-height: 1;
 }
  
-.rd { font-size: 10.5px; color: #b0bacf; }
- 
-.rc {
-  font-size: 10px;
-  color: #b0bacf;
-  font-weight: 300;
-  margin-bottom: 8px;
-}
+.rd { font-size: 10px; color: #b0bacf; }
+.rc { font-size: 10px; color: #b0bacf; font-weight: 300; margin-bottom: 8px; }
  
 .sbar {
-  height: 3px;
-  border-radius: 2px;
+  height: 3px; border-radius: 2px;
   background: #eaeef5;
-  position: relative;
-  overflow: hidden;
-  margin-bottom: 5px;
+  position: relative; overflow: hidden; margin-bottom: 5px;
 }
  
 .sfill { height: 100%; border-radius: 2px; position: absolute; left: 0; }
  
 .slabs {
-  display: flex;
-  justify-content: space-between;
-  font-size: 9.5px;
-  color: #b0bacf;
-  font-weight: 500;
+  display: flex; justify-content: space-between;
+  font-size: 9.5px; color: #b0bacf; font-weight: 500;
 }
- 
 .slabs .neg { color: #f27272; }
  
-/* Winner */
+.themes {
+  margin-top: 8px;
+  display: flex; flex-wrap: wrap; gap: 4px;
+}
+ 
+.theme-tag {
+  font-size: 9px; font-weight: 500;
+  padding: 2px 6px; border-radius: 3px;
+}
+ 
+.theme-tag.pos { background: #d1fae5; color: #065f46; }
+.theme-tag.neg { background: #fee2e2; color: #991b1b; }
+ 
+/* winner */
 .wcard {
   background: #fff;
   border: 1px solid #e0e4ee;
@@ -492,67 +484,29 @@ input:focus        { border-color: rgba(79,142,247,0.45); }
   display: grid;
   grid-template-columns: 50px 1fr auto;
   align-items: center;
-  gap: 13px;
+  gap: 12px;
 }
  
 .wscore { text-align: center; }
  
 .wsn {
   font-family: var(--serif);
-  font-size: 28px;
-  font-weight: 500;
-  color: #1d4ed8;
-  letter-spacing: -1px;
-  line-height: 1;
+  font-size: 28px; font-weight: 600;
+  color: #1d4ed8; letter-spacing: -1px; line-height: 1;
 }
  
 .wsl {
-  font-size: 8.5px;
-  text-transform: uppercase;
-  letter-spacing: 0.12em;
-  color: #b0bacf;
-  font-weight: 600;
+  font-size: 8.5px; text-transform: uppercase;
+  letter-spacing: 0.12em; color: #b0bacf; font-weight: 600;
 }
  
-.wb {
-  font-size: 8.5px;
-  text-transform: uppercase;
-  letter-spacing: 0.1em;
-  color: #d97706;
-  font-weight: 700;
-  margin-bottom: 2px;
-}
+.wb { font-size: 8.5px; text-transform: uppercase; letter-spacing: 0.1em; color: #d97706; font-weight: 700; margin-bottom: 2px; }
+.wn { font-family: var(--serif); font-size: 13.5px; font-weight: 500; color: #18243a; margin-bottom: 2px; }
+.wd { font-size: 11px; color: #7a8bab; line-height: 1.5; font-weight: 300; }
  
-.wn {
-  font-family: var(--serif);
-  font-size: 13.5px;
-  font-weight: 500;
-  color: #18243a;
-  margin-bottom: 2px;
-}
+.wtags { display: flex; flex-direction: column; gap: 4px; align-items: flex-end; }
  
-.wd {
-  font-size: 11px;
-  color: #7a8bab;
-  line-height: 1.5;
-  font-weight: 300;
-}
- 
-.wtags {
-  display: flex;
-  flex-direction: column;
-  gap: 4px;
-  align-items: flex-end;
-}
- 
-.tag {
-  font-size: 9.5px;
-  font-weight: 500;
-  padding: 2px 7px;
-  border-radius: 4px;
-  white-space: nowrap;
-}
- 
+.tag { font-size: 9.5px; font-weight: 500; padding: 2px 7px; border-radius: 4px; white-space: nowrap; }
 .tag.pos { background: #d1fae5; color: #065f46; }
 .tag.neg { background: #fee2e2; color: #991b1b; }
 </style>
@@ -560,112 +514,76 @@ input:focus        { border-color: rgba(79,142,247,0.45); }
 <body>
  
 <section class="hero">
- 
-  <!-- LEFT -->
   <div class="hl">
     <div>
       <p class="eyebrow">Competitive intelligence</p>
       <h1>Turn customer reviews<br>into <em>strategic insight</em></h1>
       <p class="subtitle">Benchmark up to 5 businesses side-by-side — sentiment, ratings, trends, and top mentions from real Google Maps reviews.</p>
  
-      <div class="feat-grid">
-        <div class="feat">
-          <div class="feat-icon fi-blue">
-            <svg viewBox="0 0 8 8" fill="none"><rect x="0" y="4" width="2" height="4" rx="0.5" fill="#4f8ef7"/><rect x="3" y="2" width="2" height="6" rx="0.5" fill="#4f8ef7"/><rect x="6" y="0" width="2" height="8" rx="0.5" fill="#4f8ef7"/></svg>
-          </div>
-          Side-by-side rating comparison
-        </div>
-        <div class="feat">
-          <div class="feat-icon fi-green">
-            <svg viewBox="0 0 8 8" fill="none"><circle cx="4" cy="4" r="3.5" stroke="#2dd4a0" stroke-width="1"/><path d="M4 4 L4 1.5" stroke="#2dd4a0" stroke-width="1" stroke-linecap="round"/><path d="M4 4 L6 5.2" stroke="#2dd4a0" stroke-width="1" stroke-linecap="round"/></svg>
-          </div>
-          Sentiment % breakdown
-        </div>
-        <div class="feat">
-          <div class="feat-icon fi-amber">
-            <svg viewBox="0 0 8 8" fill="none"><path d="M1 6 L3 3.5 L5 5 L7 1.5" stroke="#f9bc4a" stroke-width="1" stroke-linecap="round" stroke-linejoin="round"/></svg>
-          </div>
-          Ratings over time (multi-year)
-        </div>
-        <div class="feat">
-          <div class="feat-icon fi-red">
-            <svg viewBox="0 0 8 8" fill="none"><path d="M1 2.5 h6 M1 4 h4 M1 5.5 h5" stroke="#f27272" stroke-width="1" stroke-linecap="round"/></svg>
-          </div>
-          Top mentions per category
-        </div>
-        <div class="feat" style="grid-column:span 2">
-          <div class="feat-icon fi-blue">
-            <svg viewBox="0 0 8 8" fill="none"><polygon points="4,1 7,7 1,7" stroke="#4f8ef7" stroke-width="1" stroke-linejoin="round"/></svg>
-          </div>
-          Competitive benchmark score + strategic recommendations
-        </div>
+      <div class="feats">
+        <div class="feat"><span class="fdot" style="background:var(--accent-lt)"></span>Side-by-side rating comparison</div>
+        <div class="feat"><span class="fdot" style="background:var(--green)"></span>Sentiment % breakdown</div>
+        <div class="feat"><span class="fdot" style="background:var(--amber)"></span>Ratings over time</div>
+        <div class="feat"><span class="fdot" style="background:var(--red)"></span>Top mentions per category</div>
+        <div class="feat" style="grid-column:span 2"><span class="fdot" style="background:#c084fc"></span>Competitive benchmark score + strategic recommendations</div>
       </div>
  
       <div class="testi">
-        <p class="testi-q">"We identified a service gap our top competitor had that we weren't capitalising on — within a week of running this. It's like having a research analyst on demand."</p>
-        <div class="testi-who">
-          <div class="testi-av">SR</div>
+        <p class="tq">"We identified a service gap our top competitor had that we weren't capitalising on — within a week of running this. It's like having a research analyst on demand."</p>
+        <div class="tauth">
+          <div class="tav">SR</div>
           <div>
-            <div class="testi-name">Sarah R. &nbsp;·&nbsp; <span class="testi-role">Head of Strategy, F&amp;B Group · Singapore</span></div>
+            <div class="tname">Sarah R.</div>
+            <div class="trole">Head of Strategy, F&amp;B Group · Singapore</div>
           </div>
         </div>
       </div>
     </div>
  
     <div class="stats">
-      <div class="stat">
-        <div class="stat-n">30+</div>
-        <div class="stat-l">Reviews per biz</div>
-      </div>
-      <div class="stat">
-        <div class="stat-n">5</div>
-        <div class="stat-l">Dimensions</div>
-      </div>
-      <div class="stat">
-        <div class="stat-n">&lt;60s</div>
-        <div class="stat-l">To insights</div>
-      </div>
+      <div class="stat"><div class="stat-n">30+</div><div class="stat-l">Reviews per biz</div></div>
+      <div class="stat"><div class="stat-n">5</div><div class="stat-l">Dimensions</div></div>
+      <div class="stat"><div class="stat-n">&lt;60s</div><div class="stat-l">To insights</div></div>
     </div>
   </div>
  
-  <!-- RIGHT -->
   <div class="hr">
     <p class="panel-h">Get started</p>
     <p class="panel-s">Paste your key and Google Maps URLs to run your first analysis.</p>
  
     <label class="lbl">SerpAPI key</label>
-    <input type="text" placeholder="Paste your SerpAPI key here…">
+    <input id="serp-key" type="text" placeholder="Paste your SerpAPI key here…">
     <p class="hint">serpapi.com — 100 free searches included</p>
  
     <div class="row-hd">
       <label class="lbl" style="margin:0">Businesses to compare <span style="text-transform:none;letter-spacing:0;font-weight:300;opacity:0.6">(up to 5)</span></label>
-      <button class="add">+ Add</button>
+      <button class="add" id="add-btn">+ Add</button>
     </div>
-    <p class="hint" style="margin-top:5px;margin-bottom:9px">First entry is your primary business — the rest are competitors.</p>
+    <p class="hint" style="margin-top:5px;margin-bottom:8px">First entry is your primary business — the rest are competitors.</p>
  
-    <div class="brow">
-      <div class="brow-l">
-        <span class="bdot" style="background:#4f8ef7"></span>
-        <input placeholder="Primary business" style="height:35px">
+    <div class="brows" id="biz-rows">
+      <div class="brow" data-index="0">
+        <div class="brow-l">
+          <span class="bdot" style="background:#3b82f6"></span>
+          <input type="text" placeholder="Primary business" style="height:34px">
+        </div>
+        <input type="text" placeholder="Paste Google Maps URL…" style="height:34px">
       </div>
-      <input placeholder="Paste Google Maps URL…" style="height:35px">
-    </div>
- 
-    <div class="brow">
-      <div class="brow-l">
-        <span class="bdot" style="background:#2dd4a0"></span>
-        <input placeholder="Competitor name" style="height:35px">
+      <div class="brow" data-index="1">
+        <div class="brow-l">
+          <span class="bdot" style="background:#34d399"></span>
+          <input type="text" placeholder="Competitor name" style="height:34px">
+        </div>
+        <input type="text" placeholder="Paste Google Maps URL…" style="height:34px">
       </div>
-      <input placeholder="Paste Google Maps URL…" style="height:35px">
     </div>
  
-    <button class="run">Run analysis →</button>
+    <button class="run" id="run-btn">Run analysis →</button>
+    <div class="err-bar" id="err-bar"></div>
   </div>
- 
 </section>
  
 <section class="bottom">
- 
   <div class="how">
     <p class="sec-eye">How it works</p>
     <p class="sec-h">Three steps to insights</p>
@@ -696,52 +614,315 @@ input:focus        { border-color: rgba(79,142,247,0.45); }
   </div>
  
   <div class="out">
-    <p class="sec-eye">Sample output</p>
-    <p class="sec-h">Singapore cafes benchmark</p>
-    <p class="sec-s" style="margin-bottom:13px">Live data from Google Maps reviews.</p>
+    <div id="results-area">
+      <p class="sec-eye">Sample output</p>
+      <p class="sec-h">Singapore cafes benchmark</p>
+      <p class="sec-s" style="margin-bottom:13px">Paste real URLs above to replace this with live data.</p>
  
-    <div class="bcards">
-      <div class="bc p">
-        <div class="bc-hd"><div class="bav s">S</div><div class="bn">September Coffee</div></div>
-        <div class="br"><span class="rv">4.2</span><span class="rd">/5</span></div>
-        <p class="rc">628 reviews</p>
-        <div class="sbar"><div class="sfill" style="width:72%;background:#4f8ef7"></div></div>
-        <div class="slabs"><span>72%</span><span class="neg">18%</span></div>
+      <div class="bcards" style="grid-template-columns:repeat(3,1fr)">
+        <div class="bc" style="border-top-color:#3b82f6">
+          <div class="bc-hd"><div class="bav" style="background:#3b82f6">S</div><div class="bn">September Coffee</div></div>
+          <div class="br"><span class="rv">4.2</span><span class="rd">/5</span></div>
+          <p class="rc">628 reviews</p>
+          <div class="sbar"><div class="sfill" style="width:72%;background:#3b82f6"></div></div>
+          <div class="slabs"><span>72%</span><span class="neg">18%</span></div>
+        </div>
+        <div class="bc" style="border-top-color:#10b981">
+          <div class="bc-hd"><div class="bav" style="background:#10b981">G</div><div class="bn">Cafe Gyoen</div></div>
+          <div class="br"><span class="rv">4.6</span><span class="rd">/5</span></div>
+          <p class="rc">450 reviews</p>
+          <div class="sbar"><div class="sfill" style="width:88%;background:#10b981"></div></div>
+          <div class="slabs"><span>88%</span><span class="neg">6%</span></div>
+        </div>
+        <div class="bc" style="border-top-color:#f59e0b">
+          <div class="bc-hd"><div class="bav" style="background:#f59e0b">K</div><div class="bn">Korio</div></div>
+          <div class="br"><span class="rv">4.1</span><span class="rd">/5</span></div>
+          <p class="rc">312 reviews</p>
+          <div class="sbar"><div class="sfill" style="width:65%;background:#f59e0b"></div></div>
+          <div class="slabs"><span>65%</span><span class="neg">22%</span></div>
+        </div>
       </div>
-      <div class="bc g">
-        <div class="bc-hd"><div class="bav g">G</div><div class="bn">Cafe Gyoen</div></div>
-        <div class="br"><span class="rv">4.6</span><span class="rd">/5</span></div>
-        <p class="rc">450 reviews</p>
-        <div class="sbar"><div class="sfill" style="width:88%;background:#2dd4a0"></div></div>
-        <div class="slabs"><span>88%</span><span class="neg">6%</span></div>
-      </div>
-      <div class="bc k">
-        <div class="bc-hd"><div class="bav k">K</div><div class="bn">Korio</div></div>
-        <div class="br"><span class="rv">4.1</span><span class="rd">/5</span></div>
-        <p class="rc">312 reviews</p>
-        <div class="sbar"><div class="sfill" style="width:65%;background:#f9bc4a"></div></div>
-        <div class="slabs"><span>65%</span><span class="neg">22%</span></div>
+ 
+      <div class="wcard">
+        <div class="wscore"><div class="wsn">92</div><div class="wsl">Score</div></div>
+        <div>
+          <div class="wb">🏆 Top performer</div>
+          <div class="wn">Cafe Gyoen</div>
+          <div class="wd">Highest rating (4.6/5), strongest sentiment (88%), no recurring negative themes.</div>
+        </div>
+        <div class="wtags">
+          <span class="tag pos">+ Exceptional matcha</span>
+          <span class="tag pos">+ Consistent service</span>
+          <span class="tag neg">− Limited menu variety</span>
+        </div>
       </div>
     </div>
+  </div>
+</section>
  
+<script>
+const COLORS = ['#3b82f6','#10b981','#f59e0b','#f87171','#a78bfa'];
+ 
+// ── ADD ROW ──────────────────────────────────────────────
+document.getElementById('add-btn').addEventListener('click', () => {
+  const rows = document.querySelectorAll('.brow');
+  if (rows.length >= 5) return;
+  const idx = rows.length;
+  const row = document.createElement('div');
+  row.className = 'brow';
+  row.dataset.index = idx;
+  row.innerHTML = `
+    <div class="brow-l">
+      <span class="bdot" style="background:${COLORS[idx]}"></span>
+      <input type="text" placeholder="Competitor name" style="height:34px">
+    </div>
+    <input type="text" placeholder="Paste Google Maps URL…" style="height:34px">
+  `;
+  document.getElementById('biz-rows').appendChild(row);
+  if (idx === 4) document.getElementById('add-btn').disabled = true;
+});
+ 
+// ── UTILS ────────────────────────────────────────────────
+function extractDataId(url) {
+  const m = url.match(/!1s(0x[a-fA-F0-9]+:[a-fA-F0-9]+)/);
+  return m ? m[1] : null;
+}
+ 
+function extractPlaceName(url) {
+  try {
+    const m = url.match(/\/place\/([^/@?#]+)/);
+    return m ? decodeURIComponent(m[1].replace(/\+/g, ' ')) : null;
+  } catch { return null; }
+}
+ 
+function showErr(msg) {
+  const bar = document.getElementById('err-bar');
+  bar.textContent = msg;
+  bar.style.display = 'block';
+}
+ 
+function hideErr() {
+  document.getElementById('err-bar').style.display = 'none';
+}
+ 
+function setLoading(label, step) {
+  document.getElementById('results-area').innerHTML = `
+    <p class="sec-eye">Analysis in progress</p>
+    <p class="sec-h" style="margin-bottom:4px">${label}</p>
+    <p class="sec-s" style="margin-bottom:20px">${step}</p>
+    <div class="loading-state">
+      <div class="spinner"></div>
+      <div class="loading-label">${label}</div>
+      <div class="loading-step">${step}</div>
+    </div>
+  `;
+}
+ 
+// ── FETCH REVIEWS via SerpAPI ────────────────────────────
+async function fetchReviews(dataId, apiKey, label) {
+  setLoading(`Fetching reviews for ${label}…`, 'Calling SerpAPI Google Maps Reviews');
+  const url = `https://serpapi.com/search.json?engine=google_maps_reviews&data_id=${encodeURIComponent(dataId)}&api_key=${encodeURIComponent(apiKey)}&hl=en&num=20`;
+  const res = await fetch(url);
+  if (!res.ok) throw new Error(`SerpAPI error ${res.status}: ${await res.text()}`);
+  return res.json();
+}
+ 
+// ── ANALYZE with Claude ──────────────────────────────────
+async function analyzeWithClaude(businesses) {
+  setLoading('Analysing with Claude…', 'Extracting sentiment, themes and competitive scores');
+ 
+  const payload = businesses.map(b => ({
+    name: b.name,
+    rating: b.rating,
+    totalReviews: b.totalReviews,
+    reviews: (b.reviews || []).slice(0, 25).map(r => ({
+      stars: r.rating,
+      text: r.snippet || r.description || ''
+    }))
+  }));
+ 
+  const prompt = `You are a competitive intelligence analyst. Analyse these Google Maps review datasets and respond ONLY with a valid JSON object — no markdown, no explanation, no preamble.
+ 
+Data:
+${JSON.stringify(payload, null, 2)}
+ 
+Return this exact JSON shape:
+{
+  "businesses": [
+    {
+      "name": "string — match the input name exactly",
+      "rating": number,
+      "totalReviews": number,
+      "positivePct": number (0-100),
+      "negativePct": number (0-100),
+      "positiveThemes": ["short phrase", "short phrase"],
+      "negativeThemes": ["short phrase"],
+      "score": number (0-100, weighted: 40% rating, 40% sentiment, 20% review volume)
+    }
+  ],
+  "winner": {
+    "name": "string",
+    "insight": "One sentence — what makes them the clear leader vs competitors"
+  }
+}`;
+ 
+  const res = await fetch('https://api.anthropic.com/v1/messages', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({
+      model: 'claude-sonnet-4-20250514',
+      max_tokens: 1500,
+      messages: [{ role: 'user', content: prompt }]
+    })
+  });
+ 
+  if (!res.ok) throw new Error(`Claude API error ${res.status}`);
+  const data = await res.json();
+  const text = data.content.find(c => c.type === 'text')?.text || '';
+  const clean = text.replace(/```json|```/g, '').trim();
+  return JSON.parse(clean);
+}
+ 
+// ── RENDER RESULTS ───────────────────────────────────────
+function renderResults(analysis, inputBusinesses) {
+  const bizCount = analysis.businesses.length;
+  const cols = bizCount <= 2 ? `repeat(${bizCount},1fr)` : bizCount === 3 ? 'repeat(3,1fr)' : 'repeat(2,1fr)';
+ 
+  const cards = analysis.businesses.map((b, i) => {
+    const color = COLORS[i] || COLORS[0];
+    const initial = b.name.trim()[0].toUpperCase();
+    const posTags = (b.positiveThemes || []).map(t => `<span class="theme-tag pos">+ ${t}</span>`).join('');
+    const negTags = (b.negativeThemes || []).map(t => `<span class="theme-tag neg">− ${t}</span>`).join('');
+    return `
+      <div class="bc" style="border-top-color:${color}">
+        <div class="bc-hd">
+          <div class="bav" style="background:${color}">${initial}</div>
+          <div class="bn">${b.name}</div>
+        </div>
+        <div class="br"><span class="rv">${(+b.rating).toFixed(1)}</span><span class="rd">/5</span></div>
+        <p class="rc">${(b.totalReviews || 0).toLocaleString()} reviews</p>
+        <div class="sbar"><div class="sfill" style="width:${b.positivePct}%;background:${color}"></div></div>
+        <div class="slabs"><span>${b.positivePct}%</span><span class="neg">${b.negativePct}%</span></div>
+        <div class="themes">${posTags}${negTags}</div>
+      </div>`;
+  }).join('');
+ 
+  const winner = analysis.winner;
+  const winnerBiz = analysis.businesses.find(b => b.name === winner.name) || analysis.businesses[0];
+  const winnerColor = COLORS[analysis.businesses.indexOf(winnerBiz)] || COLORS[0];
+  const winnerPos = (winnerBiz.positiveThemes || []).map(t => `<span class="tag pos">+ ${t}</span>`).join('');
+  const winnerNeg = (winnerBiz.negativeThemes || []).map(t => `<span class="tag neg">− ${t}</span>`).join('');
+ 
+  document.getElementById('results-area').innerHTML = `
+    <p class="sec-eye">Live results</p>
+    <p class="sec-h" style="margin-bottom:3px">Competitive analysis</p>
+    <p class="sec-s" style="margin-bottom:12px">${bizCount} businesses · ${(analysis.businesses.reduce((s,b) => s + (b.totalReviews||0), 0)).toLocaleString()} reviews analysed</p>
+    <div class="bcards" style="grid-template-columns:${cols}">${cards}</div>
     <div class="wcard">
       <div class="wscore">
-        <div class="wsn">92</div>
+        <div class="wsn" style="color:${winnerColor}">${winnerBiz.score}</div>
         <div class="wsl">Score</div>
       </div>
       <div>
         <div class="wb">🏆 Top performer</div>
-        <div class="wn">Cafe Gyoen</div>
-        <div class="wd">Highest rating (4.6/5), strongest sentiment (88%), no recurring negative themes.</div>
+        <div class="wn">${winner.name}</div>
+        <div class="wd">${winner.insight}</div>
       </div>
-      <div class="wtags">
-        <span class="tag pos">+ Exceptional matcha</span>
-        <span class="tag pos">+ Consistent service</span>
-        <span class="tag neg">− Limited menu variety</span>
-      </div>
+      <div class="wtags">${winnerPos}${winnerNeg}</div>
     </div>
-  </div>
+  `;
+}
  
-</section>
+// ── RUN ANALYSIS ─────────────────────────────────────────
+document.getElementById('run-btn').addEventListener('click', async () => {
+  hideErr();
+  const apiKey = document.getElementById('serp-key').value.trim();
+  if (!apiKey) { showErr('Please enter your SerpAPI key.'); return; }
+ 
+  const rows = document.querySelectorAll('.brow');
+  const businesses = [];
+ 
+  for (const row of rows) {
+    const inputs = row.querySelectorAll('input');
+    const name = inputs[0].value.trim();
+    const url  = inputs[1].value.trim();
+    if (!url) continue;
+    const dataId = extractDataId(url);
+    if (!dataId) {
+      showErr(`Could not parse a Google Maps data ID from the URL for "${name || url}". Make sure you're using a full Google Maps place URL (e.g. google.com/maps/place/…).`);
+      return;
+    }
+    businesses.push({ name: name || extractPlaceName(url) || `Business ${businesses.length + 1}`, url, dataId });
+  }
+ 
+  if (businesses.length === 0) {
+    showErr('Please add at least one business with a Google Maps URL.');
+    return;
+  }
+ 
+  const btn = document.getElementById('run-btn');
+  btn.disabled = true;
+  btn.textContent = 'Running…';
+ 
+  try {
+    // Fetch reviews for each business
+    const enriched = [];
+    for (const biz of businesses) {
+      setLoading(`Fetching reviews for ${biz.name}…`, `${enriched.length + 1} of ${businesses.length} businesses`);
+      const data = await fetchReviews(biz.dataId, apiKey, biz.name);
+ 
+      if (data.error) throw new Error(`SerpAPI: ${data.error}`);
+ 
+      const placeInfo = data.place_info || {};
+      enriched.push({
+        name: biz.name,
+        rating: placeInfo.rating || 0,
+        totalReviews: placeInfo.reviews || 0,
+        reviews: data.reviews || []
+      });
+    }
+ 
+    // Analyse with Claude
+    const analysis = await analyzeWithClaude(enriched);
+ 
+    // Render
+    renderResults(analysis, businesses);
+ 
+  } catch (err) {
+    showErr(`Error: ${err.message}`);
+    document.getElementById('results-area').innerHTML = `
+      <p class="sec-eye">Sample output</p>
+      <p class="sec-h">Singapore cafes benchmark</p>
+      <p class="sec-s" style="margin-bottom:13px">Analysis failed — sample data shown below.</p>
+      <div class="bcards" style="grid-template-columns:repeat(3,1fr)">
+        <div class="bc" style="border-top-color:#3b82f6">
+          <div class="bc-hd"><div class="bav" style="background:#3b82f6">S</div><div class="bn">September Coffee</div></div>
+          <div class="br"><span class="rv">4.2</span><span class="rd">/5</span></div>
+          <p class="rc">628 reviews</p>
+          <div class="sbar"><div class="sfill" style="width:72%;background:#3b82f6"></div></div>
+          <div class="slabs"><span>72%</span><span class="neg">18%</span></div>
+        </div>
+        <div class="bc" style="border-top-color:#10b981">
+          <div class="bc-hd"><div class="bav" style="background:#10b981">G</div><div class="bn">Cafe Gyoen</div></div>
+          <div class="br"><span class="rv">4.6</span><span class="rd">/5</span></div>
+          <p class="rc">450 reviews</p>
+          <div class="sbar"><div class="sfill" style="width:88%;background:#10b981"></div></div>
+          <div class="slabs"><span>88%</span><span class="neg">6%</span></div>
+        </div>
+        <div class="bc" style="border-top-color:#f59e0b">
+          <div class="bc-hd"><div class="bav" style="background:#f59e0b">K</div><div class="bn">Korio</div></div>
+          <div class="br"><span class="rv">4.1</span><span class="rd">/5</span></div>
+          <p class="rc">312 reviews</p>
+          <div class="sbar"><div class="sfill" style="width:65%;background:#f59e0b"></div></div>
+          <div class="slabs"><span>65%</span><span class="neg">22%</span></div>
+        </div>
+      </div>
+    `;
+  } finally {
+    btn.disabled = false;
+    btn.textContent = 'Run analysis →';
+  }
+});
+</script>
 </body>
 </html>
