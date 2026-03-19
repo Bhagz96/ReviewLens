@@ -552,7 +552,7 @@ input[type="text"]:focus { border-color: rgba(59,130,246,0.45); }
     <p class="panel-s">Paste your key and Google Maps URLs to run your first analysis.</p>
  
     <label class="lbl">SerpAPI key</label>
-    <input id="serp-key" type="text" placeholder="Paste your SerpAPI key here…">
+    <input id="serp-key" type="password" placeholder="Paste your SerpAPI key here…" autocomplete="off">
     <p class="hint">serpapi.com — 100 free searches included</p>
  
     <div class="row-hd">
@@ -720,10 +720,23 @@ function setLoading(label, step) {
  
 // ── FETCH REVIEWS via SerpAPI ────────────────────────────
 async function fetchReviews(dataId, apiKey, label) {
-  setLoading(`Fetching reviews for ${label}…`, 'Calling SerpAPI Google Maps Reviews');
-  const url = `https://serpapi.com/search.json?engine=google_maps_reviews&data_id=${encodeURIComponent(dataId)}&api_key=${encodeURIComponent(apiKey)}&hl=en&num=20`;
-  const res = await fetch(url);
-  if (!res.ok) throw new Error(`SerpAPI error ${res.status}: ${await res.text()}`);
+  setLoading(`Fetching reviews for ${label}...`, 'Calling SerpAPI Google Maps Reviews');
+  const directUrl = `https://serpapi.com/search.json?engine=google_maps_reviews&data_id=${encodeURIComponent(dataId)}&api_key=${encodeURIComponent(apiKey)}&hl=en&num=20`;
+ 
+  let res;
+  try {
+    res = await fetch(directUrl, { mode: 'cors' });
+  } catch (_corsErr) {
+    // CORS blocked (common when running from local file) — retry via proxy
+    const proxied = 'https://corsproxy.io/?' + encodeURIComponent(directUrl);
+    res = await fetch(proxied);
+  }
+ 
+  if (!res.ok) {
+    let msg = 'SerpAPI error ' + res.status;
+    try { const j = await res.json(); if (j.error) msg = j.error; } catch {}
+    throw new Error(msg);
+  }
   return res.json();
 }
  
