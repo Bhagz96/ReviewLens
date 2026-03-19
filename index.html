@@ -54,6 +54,22 @@
     .sample-mini { background: var(--surface); border-radius: 12px; border: 1px solid var(--border); padding: 16px; }
     .step-circle { width: 32px; height: 32px; border-radius: 50%; background: var(--navy); color: #fff; font-size: 13px; font-weight: 700; display: flex; align-items: center; justify-content: center; flex-shrink: 0; border: 2px solid #2a3547; }
     .step-line { width: 2px; background: #2a3547; flex: 1; margin: 4px 0; align-self: stretch; min-height: 20px; }
+ 
+    @media print {
+      #screen-setup, #screen-loading, #nav { display: none !important; }
+      #screen-results { display: block !important; }
+      .hidden { display: block !important; }
+      .tab-btn, button { display: none !important; }
+      body { background: #fff !important; font-size: 11pt; }
+      .card { border: 1px solid #ddd !important; border-radius: 6px !important; page-break-inside: avoid; }
+      .print-section { page-break-before: always; padding-top: 1rem; }
+      .print-section:first-child { page-break-before: avoid; }
+      #print-header { display: block !important; }
+      #tab-overview, #tab-timeline, #tab-themes, #tab-highlights, #tab-benchmark { display: block !important; }
+      .print-label { font-size: 10pt; font-weight: 700; text-transform: uppercase; letter-spacing: 1px; color: #94a3b8; margin: 2rem 0 0.5rem; display: block; }
+      canvas { max-width: 100% !important; }
+    }
+ 
     @media(max-width:768px){ .split-hero{flex-direction:column!important;} .hero-right{border-left:none!important;border-top:1px solid rgba(255,255,255,0.06)!important;} .below-fold{flex-direction:column!important;} }
   </style>
 </head>
@@ -271,9 +287,27 @@
     <button class="tab-btn" onclick="switchTab('themes')">Themes</button>
     <button class="tab-btn" onclick="switchTab('highlights')">Highlights</button>
     <button class="tab-btn" onclick="switchTab('benchmark')">Benchmark</button>
-    <button onclick="reset()" style="font-size:12px;padding:5px 12px;margin-left:auto;flex-shrink:0;color:var(--muted);background:transparent;border:1px solid var(--border);border-radius:7px;">← New search</button>
+    <div style="display:flex;gap:6px;margin-left:auto;flex-shrink:0;">
+      <button onclick="exportPDF()" style="font-size:12px;padding:5px 12px;background:transparent;border:1px solid var(--border);border-radius:7px;color:var(--muted);display:flex;align-items:center;gap:5px;">
+        <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/><polyline points="10 9 9 9 8 9"/></svg>
+        Export PDF
+      </button>
+      <button onclick="exportWord()" style="font-size:12px;padding:5px 12px;background:transparent;border:1px solid var(--border);border-radius:7px;color:var(--muted);display:flex;align-items:center;gap:5px;">
+        <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/><polyline points="10 9 9 9 8 9"/></svg>
+        Export Word
+      </button>
+      <button onclick="reset()" style="font-size:12px;padding:5px 12px;background:transparent;border:1px solid var(--border);border-radius:7px;color:var(--muted);">← New search</button>
+    </div>
   </div>
   <div style="max-width:1040px;margin:0 auto;padding:2rem 1.5rem;">
+ 
+  <!-- Print header - hidden normally -->
+  <div id="print-header" style="display:none;margin-bottom:2rem;">
+    <div style="font-size:10pt;color:#94a3b8;text-transform:uppercase;letter-spacing:1px;margin-bottom:4px;">ReviewLens — Competitive Intelligence Report</div>
+    <div id="print-title" style="font-size:20pt;font-weight:700;color:#0d1f3c;margin-bottom:4px;"></div>
+    <div style="font-size:10pt;color:#64748b;">Generated on <span id="print-date"></span></div>
+    <hr style="margin:1rem 0;border:none;border-top:2px solid #0d1f3c;"/>
+  </div>
     <div id="tab-overview"></div>
     <div id="tab-timeline" class="hidden"></div>
     <div id="tab-themes" class="hidden"></div>
@@ -360,6 +394,143 @@ async function runAnalysis(){
   }catch(e){addLog("AI analysis failed: "+e.message,"error");document.getElementById("loading-error-msg").textContent="Failed: "+e.message;show("loading-error");}
 }
  
+ 
+function exportPDF(){
+  // Set print header info
+  var bizs=results&&results.businesses||[];
+  document.getElementById('print-title').textContent=bizs.map(function(b){return b.name;}).join(' vs ');
+  document.getElementById('print-date').textContent=new Date().toLocaleDateString('en-SG',{day:'numeric',month:'long',year:'numeric'});
+  // Show all tabs temporarily
+  ["overview","timeline","themes","highlights","benchmark"].forEach(function(t){
+    document.getElementById("tab-"+t).classList.remove("hidden");
+  });
+  window.print();
+  // Restore current tab after print
+  setTimeout(function(){
+    ["overview","timeline","themes","highlights","benchmark"].forEach(function(t){
+      if(t!==currentTab) document.getElementById("tab-"+t).classList.add("hidden");
+    });
+  },500);
+}
+ 
+function exportWord(){
+  var bizs=results&&results.businesses||[];
+  var bench=results&&results.benchmark;
+  var title=bizs.map(function(b){return b.name;}).join(' vs ');
+  var date=new Date().toLocaleDateString('en-SG',{day:'numeric',month:'long',year:'numeric'});
+  var PALETTE=["#4a9eff","#2ec4a9","#f5a623","#e8614d","#9b59b6"];
+ 
+  function esc2(s){return(s||"").replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;");}
+ 
+  var html='<html xmlns:o="urn:schemas-microsoft-com:office:office" xmlns:w="urn:schemas-microsoft-com:office:word"><head><meta charset="utf-8"><style>';
+  html+='body{font-family:Calibri,sans-serif;font-size:11pt;color:#1a2744;margin:2cm;}';
+  html+='h1{font-size:20pt;color:#0d1f3c;margin-bottom:4pt;}';
+  html+='h2{font-size:14pt;color:#0d1f3c;border-bottom:2px solid #0d1f3c;padding-bottom:4pt;margin-top:24pt;margin-bottom:12pt;}';
+  html+='h3{font-size:12pt;color:#0d1f3c;margin-top:16pt;margin-bottom:6pt;}';
+  html+='table{width:100%;border-collapse:collapse;margin-bottom:16pt;}';
+  html+='td,th{padding:8pt 10pt;border:1px solid #e2e8f0;font-size:10pt;vertical-align:top;}';
+  html+='th{background:#f4f6f9;font-weight:700;color:#0d1f3c;}';
+  html+='.pos{color:#0d7a5f;font-weight:600;}.neg{color:#c0392b;font-weight:600;}';
+  html+='.muted{color:#64748b;}.small{color:#94a3b8;font-size:9pt;}';
+  html+='.section-break{page-break-before:always;}';
+  html+='</style></head><body>';
+ 
+  // Cover
+  html+='<div style="margin-bottom:24pt;">';
+  html+='<div style="font-size:9pt;color:#94a3b8;text-transform:uppercase;letter-spacing:1px;margin-bottom:6pt;">ReviewLens — Competitive Intelligence Report</div>';
+  html+='<h1>'+esc2(title)+'</h1>';
+  html+='<div class="muted">Generated on '+date+'</div>';
+  html+='<hr style="border:none;border-top:2px solid #0d1f3c;margin:12pt 0;"/>';
+  html+='</div>';
+ 
+  // 1. OVERVIEW
+  html+='<h2>1. Overview</h2>';
+  html+='<table><tr><th>Business</th><th>Rating</th><th>Reviews</th><th>Positive</th><th>Negative</th><th>Price Range</th><th>Summary</th></tr>';
+  bizs.forEach(function(biz){
+    html+='<tr><td><strong>'+esc2(biz.name)+'</strong><br/><span class="small">'+esc2(biz.category||"")+'</span></td>';
+    html+='<td><strong>'+((biz.overall_rating||0).toFixed(1))+'</strong>/5</td>';
+    html+='<td>'+((biz.total_reviews||0).toLocaleString())+'</td>';
+    html+='<td class="pos">'+(biz.positive_pct||0)+'%</td>';
+    html+='<td class="neg">'+(biz.negative_pct||0)+'%</td>';
+    html+='<td>'+esc2(biz.price_range||"—")+'</td>';
+    html+='<td class="muted">'+esc2(biz.one_line_summary||"")+'</td></tr>';
+  });
+  html+='</table>';
+ 
+  bizs.forEach(function(biz,i){
+    if(biz.description){
+      html+='<h3>'+esc2(biz.name)+'</h3>';
+      html+='<p style="font-size:10pt;color:#64748b;line-height:1.6;">'+esc2(biz.description)+'</p>';
+    }
+  });
+ 
+  // 2. TIMELINE
+  html+='<h2 class="section-break">2. Ratings Over Time</h2>';
+  bizs.forEach(function(biz,i){
+    if(biz.ratings_by_year&&biz.ratings_by_year.length){
+      html+='<h3>'+esc2(biz.name)+'</h3>';
+      html+='<table><tr><th>Year</th><th>Avg Rating</th><th>Review Count</th></tr>';
+      biz.ratings_by_year.forEach(function(yr){
+        html+='<tr><td>'+esc2(yr.year)+'</td><td><strong>'+yr.avg_rating.toFixed(1)+'</strong>/5</td><td>'+yr.count+'</td></tr>';
+      });
+      html+='</table>';
+    }
+  });
+ 
+  // 3. THEMES
+  html+='<h2 class="section-break">3. Sentiment Themes</h2>';
+  html+='<table><tr><th>Business</th><th>Positive %</th><th>Negative %</th><th>What People Love</th><th>Pain Points</th></tr>';
+  bizs.forEach(function(biz){
+    html+='<tr><td><strong>'+esc2(biz.name)+'</strong></td>';
+    html+='<td class="pos">'+(biz.positive_pct||0)+'%</td>';
+    html+='<td class="neg">'+(biz.negative_pct||0)+'%</td>';
+    html+='<td>'+(biz.positive_themes||[]).map(function(t){return'• '+esc2(t);}).join('<br/>')+'</td>';
+    html+='<td>'+(biz.negative_themes||[]).map(function(t){return'• '+esc2(t);}).join('<br/>')+'</td></tr>';
+  });
+  html+='</table>';
+ 
+  // 4. HIGHLIGHTS
+  html+='<h2 class="section-break">4. Product & Service Highlights</h2>';
+  html+='<table><tr><th>Business</th><th>Top Mentions (4-5★)</th><th>Flagged (1-2★)</th></tr>';
+  bizs.forEach(function(biz){
+    var best=(biz.best_mentions||biz.best_dishes||[]);
+    var worst=(biz.worst_mentions||biz.worst_dishes||[]);
+    html+='<tr><td><strong>'+esc2(biz.name)+'</strong></td>';
+    html+='<td class="pos">'+(best.length?best.map(function(d){return'▲ '+esc2(d);}).join('<br/>'):'—')+'</td>';
+    html+='<td class="neg">'+(worst.length?worst.map(function(d){return'▼ '+esc2(d);}).join('<br/>'):'—')+'</td></tr>';
+  });
+  html+='</table>';
+ 
+  // 5. BENCHMARK
+  html+='<h2 class="section-break">5. Competitive Benchmark</h2>';
+  if(bench){
+    html+='<div style="background:#f0f7ff;border:1px solid #d0e4ff;border-radius:6px;padding:12pt;margin-bottom:16pt;">';
+    html+='<strong>Top Performer: '+esc2(bench.winner)+'</strong><br/>';
+    html+='<span class="muted">'+esc2(bench.winner_reason)+'</span>';
+    if(bench.key_differentiator) html+='<br/><span class="small">Key differentiator: '+esc2(bench.key_differentiator)+'</span>';
+    html+='</div>';
+    html+='<table><tr><th>Rank</th><th>Business</th><th>Score</th><th>Strengths</th><th>Weaknesses</th></tr>';
+    (bench.rankings||[]).sort(function(a,b){return a.rank-b.rank;}).forEach(function(r,i){
+      html+='<tr><td><strong>#'+r.rank+'</strong></td><td>'+esc2(r.name)+'</td><td><strong style="color:'+PALETTE[i%PALETTE.length]+';">'+r.score+'</strong></td>';
+      html+='<td class="pos">'+esc2(r.strengths)+'</td><td class="neg">'+esc2(r.weaknesses)+'</td></tr>';
+    });
+    html+='</table>';
+  }
+ 
+  html+='</body></html>';
+ 
+  var blob=new Blob([html],{type:'application/msword'});
+  var url=URL.createObjectURL(blob);
+  var a=document.createElement('a');
+  a.href=url;
+  a.download='ReviewLens_'+title.replace(/[^a-z0-9]/gi,'_').substring(0,40)+'.doc';
+  document.body.appendChild(a);
+  a.click();
+  document.body.removeChild(a);
+  URL.revokeObjectURL(url);
+}
+ 
+var currentTab="overview";
 function renderResults(){charts.forEach(function(c){c.destroy();});charts=[];renderOverview();renderTimeline();renderThemes();renderHighlights();renderBenchmark();}
  
 function renderOverview(){
@@ -432,7 +603,7 @@ function renderBenchmark(){
   document.getElementById("tab-benchmark").innerHTML=html;
 }
  
-function switchTab(name){
+function switchTab(name){currentTab=name;
   ["overview","timeline","themes","highlights","benchmark"].forEach(function(t,i){
     document.getElementById("tab-"+t).classList[t===name?"remove":"add"]("hidden");
     document.querySelectorAll(".tab-btn")[i].classList[t===name?"add":"remove"]("active");
