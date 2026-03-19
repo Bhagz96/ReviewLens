@@ -5,86 +5,82 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>ReviewLens — Competitive Intelligence</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
-<link href="https://fonts.googleapis.com/css2?family=Onest:wght@300;400;500;600&family=Instrument+Serif:ital@0;1&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Source+Serif+4:ital,wght@0,300;0,400;0,600;1,300;1,400&family=IBM+Plex+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
 <style>
   *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
  
   :root {
     --navy: #0d1829;
-    --navy-mid: #162035;
-    --navy-card: #1c2a40;
-    --navy-border: rgba(255,255,255,0.08);
+    --navy-mid: #141e30;
+    --navy-card: #1a2640;
+    --navy-border: rgba(255,255,255,0.07);
     --blue: #3b82f6;
-    --blue-bright: #60a5fa;
-    --blue-dim: rgba(59,130,246,0.12);
-    --text-primary: #f0f4ff;
-    --text-secondary: rgba(240,244,255,0.55);
-    --text-muted: rgba(240,244,255,0.32);
+    --blue-bright: #93c5fd;
+    --blue-dim: rgba(59,130,246,0.1);
+    --text-primary: #eef2ff;
+    --text-secondary: rgba(238,242,255,0.52);
+    --text-muted: rgba(238,242,255,0.28);
     --green: #34d399;
     --red: #f87171;
     --amber: #fbbf24;
-    --radius: 8px;
-    --radius-lg: 12px;
+    --radius: 6px;
+    --radius-lg: 10px;
+    --sans: 'IBM Plex Sans', sans-serif;
+    --serif: 'Source Serif 4', Georgia, serif;
   }
  
   body {
-    font-family: 'Onest', sans-serif;
+    font-family: var(--sans);
     background: var(--navy);
     color: var(--text-primary);
-    font-size: 14px;
-    line-height: 1.5;
-    min-height: 100vh;
+    font-size: 13.5px;
+    line-height: 1.55;
   }
  
-  /* ── HERO ── */
   .hero {
     display: grid;
     grid-template-columns: 1fr 1fr;
-    gap: 0;
-    min-height: 380px;
+    min-height: 420px;
     border-bottom: 1px solid var(--navy-border);
   }
  
   .hero-left {
-    padding: 44px 48px 44px 52px;
+    padding: 40px 48px 36px 52px;
     display: flex;
     flex-direction: column;
     justify-content: space-between;
     border-right: 1px solid var(--navy-border);
   }
  
-  .hero-content {}
- 
   .hero h1 {
-    font-size: 32px;
-    font-weight: 500;
-    line-height: 1.18;
-    letter-spacing: -0.5px;
-    margin-bottom: 12px;
-    color: var(--text-primary);
+    font-family: var(--serif);
+    font-size: 34px;
+    font-weight: 600;
+    line-height: 1.15;
+    letter-spacing: -0.3px;
+    margin-bottom: 10px;
   }
  
   .hero h1 em {
-    font-family: 'Instrument Serif', serif;
     font-style: italic;
+    font-weight: 300;
     color: var(--blue-bright);
-    font-weight: 400;
   }
  
   .hero-subtitle {
     font-size: 13px;
     color: var(--text-secondary);
-    line-height: 1.6;
-    max-width: 340px;
-    margin-bottom: 24px;
+    line-height: 1.65;
+    max-width: 360px;
+    margin-bottom: 18px;
+    font-weight: 300;
   }
  
   .features {
     list-style: none;
     display: flex;
     flex-direction: column;
-    gap: 7px;
-    margin-bottom: 32px;
+    gap: 6px;
   }
  
   .features li {
@@ -92,40 +88,78 @@
     color: var(--text-secondary);
     display: flex;
     align-items: center;
-    gap: 8px;
+    gap: 9px;
+    font-weight: 300;
   }
  
-  .dot {
-    width: 5px;
-    height: 5px;
-    border-radius: 50%;
-    flex-shrink: 0;
-  }
+  .dot { width: 4px; height: 4px; border-radius: 50%; flex-shrink: 0; }
   .dot-blue   { background: var(--blue-bright); }
   .dot-amber  { background: var(--amber); }
   .dot-red    { background: var(--red); }
-  .dot-green  { background: var(--green); }
-  .dot-purple { background: #a78bfa; }
+  .dot-purple { background: #c4b5fd; }
+ 
+  .testimonial {
+    margin-top: 22px;
+    border-left: 2px solid rgba(147,197,253,0.25);
+    padding: 10px 0 10px 16px;
+  }
+ 
+  .testimonial-quote {
+    font-family: var(--serif);
+    font-style: italic;
+    font-weight: 300;
+    font-size: 13px;
+    color: rgba(238,242,255,0.68);
+    line-height: 1.7;
+    margin-bottom: 10px;
+  }
+ 
+  .testimonial-author {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+ 
+  .author-avatar {
+    width: 22px;
+    height: 22px;
+    border-radius: 50%;
+    background: rgba(147,197,253,0.1);
+    border: 1px solid rgba(147,197,253,0.18);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 9px;
+    font-weight: 600;
+    color: var(--blue-bright);
+    flex-shrink: 0;
+  }
+ 
+  .author-name {
+    font-size: 11.5px;
+    font-weight: 500;
+    color: var(--text-secondary);
+  }
+ 
+  .author-role {
+    font-size: 10.5px;
+    color: var(--text-muted);
+    font-weight: 300;
+  }
  
   .stats {
     display: flex;
-    gap: 0;
     border-top: 1px solid var(--navy-border);
-    padding-top: 20px;
+    padding-top: 18px;
+    margin-top: 22px;
   }
  
-  .stat {
-    flex: 1;
-    padding-right: 20px;
-  }
- 
-  .stat + .stat {
-    padding-left: 20px;
-    border-left: 1px solid var(--navy-border);
-  }
+  .stat { flex: 1; padding-right: 20px; }
+  .stat + .stat { padding-left: 20px; border-left: 1px solid var(--navy-border); }
  
   .stat-value {
-    font-size: 22px;
+    font-family: var(--serif);
+    font-size: 24px;
     font-weight: 600;
     color: var(--blue-bright);
     letter-spacing: -0.5px;
@@ -136,14 +170,13 @@
   .stat-label {
     font-size: 10px;
     text-transform: uppercase;
-    letter-spacing: 0.08em;
+    letter-spacing: 0.1em;
     color: var(--text-muted);
     font-weight: 500;
   }
  
-  /* ── FORM PANEL ── */
   .hero-right {
-    padding: 36px 44px 36px 44px;
+    padding: 36px 44px;
     display: flex;
     flex-direction: column;
     justify-content: center;
@@ -151,21 +184,23 @@
   }
  
   .panel-title {
-    font-size: 15px;
+    font-family: var(--serif);
+    font-size: 17px;
     font-weight: 600;
-    margin-bottom: 4px;
+    margin-bottom: 3px;
   }
  
   .panel-sub {
     font-size: 12px;
     color: var(--text-muted);
-    margin-bottom: 24px;
+    margin-bottom: 22px;
+    font-weight: 300;
   }
  
   .field-label {
     font-size: 10px;
     text-transform: uppercase;
-    letter-spacing: 0.09em;
+    letter-spacing: 0.1em;
     color: var(--text-muted);
     font-weight: 600;
     margin-bottom: 6px;
@@ -176,158 +211,144 @@
     font-size: 11px;
     color: var(--text-muted);
     margin-top: 4px;
-    margin-bottom: 18px;
+    margin-bottom: 16px;
+    font-weight: 300;
   }
  
   input[type="text"] {
     width: 100%;
-    height: 38px;
+    height: 37px;
     background: var(--navy-card);
     border: 1px solid var(--navy-border);
     border-radius: var(--radius);
     color: var(--text-primary);
-    font-family: 'Onest', sans-serif;
-    font-size: 13px;
+    font-family: var(--sans);
+    font-size: 12.5px;
+    font-weight: 300;
     padding: 0 12px;
     outline: none;
     transition: border-color 0.15s;
   }
  
   input[type="text"]::placeholder { color: var(--text-muted); }
-  input[type="text"]:focus { border-color: var(--blue); }
+  input[type="text"]:focus { border-color: rgba(59,130,246,0.5); }
  
   .biz-section-header {
     display: flex;
     align-items: center;
     justify-content: space-between;
-    margin-bottom: 8px;
+    margin-bottom: 5px;
   }
  
   .add-btn {
     font-size: 11px;
     color: var(--blue-bright);
     background: var(--blue-dim);
-    border: 1px solid rgba(96,165,250,0.2);
+    border: 1px solid rgba(147,197,253,0.15);
     border-radius: var(--radius);
-    padding: 4px 10px;
+    padding: 3px 10px;
     cursor: pointer;
-    font-family: 'Onest', sans-serif;
+    font-family: var(--sans);
     font-weight: 500;
-    transition: background 0.15s;
   }
-  .add-btn:hover { background: rgba(59,130,246,0.2); }
  
   .biz-row {
     display: grid;
-    grid-template-columns: 130px 1fr;
-    gap: 8px;
-    margin-bottom: 8px;
+    grid-template-columns: 126px 1fr;
+    gap: 7px;
+    margin-bottom: 7px;
     align-items: center;
   }
  
   .biz-indicator {
-    display: flex;
+    display: grid;
+    grid-template-columns: 10px 1fr;
     align-items: center;
     gap: 6px;
   }
  
-  .biz-dot {
-    width: 7px;
-    height: 7px;
-    border-radius: 50%;
-    flex-shrink: 0;
-  }
+  .biz-dot { width: 6px; height: 6px; border-radius: 50%; }
  
   .run-btn {
     width: 100%;
-    height: 42px;
+    height: 40px;
     background: var(--blue);
     border: none;
     border-radius: var(--radius);
     color: #fff;
-    font-family: 'Onest', sans-serif;
-    font-size: 14px;
+    font-family: var(--sans);
+    font-size: 13.5px;
     font-weight: 500;
     cursor: pointer;
-    margin-top: 16px;
+    margin-top: 14px;
     display: flex;
     align-items: center;
     justify-content: center;
-    gap: 8px;
+    gap: 7px;
     transition: background 0.15s;
-    letter-spacing: 0.01em;
   }
   .run-btn:hover { background: #2563eb; }
  
-  /* ── BOTTOM SECTION ── */
+  /* BOTTOM */
   .bottom {
     display: grid;
     grid-template-columns: 1fr 1.4fr;
-    gap: 0;
-    background: #f7f8fa;
+    background: #f5f6f8;
     color: #1a2235;
   }
  
-  /* HOW IT WORKS */
-  .how {
-    padding: 40px 44px;
-    border-right: 1px solid #e4e8ef;
-  }
+  .how { padding: 36px 44px; border-right: 1px solid #e2e6ef; }
+  .sample { padding: 36px 44px; }
  
   .section-eyebrow {
-    font-size: 11px;
+    font-size: 10px;
     text-transform: uppercase;
-    letter-spacing: 0.1em;
-    color: #6b7a99;
+    letter-spacing: 0.12em;
+    color: #8492b0;
     font-weight: 600;
     margin-bottom: 4px;
   }
  
   .section-title {
-    font-size: 18px;
+    font-family: var(--serif);
+    font-size: 20px;
     font-weight: 600;
     color: #1a2235;
-    margin-bottom: 4px;
+    margin-bottom: 3px;
     letter-spacing: -0.2px;
   }
  
   .section-sub {
     font-size: 12.5px;
-    color: #6b7a99;
-    margin-bottom: 28px;
+    color: #8492b0;
+    margin-bottom: 24px;
+    font-weight: 300;
   }
  
-  .steps {
-    display: flex;
-    flex-direction: column;
-    gap: 0;
-  }
+  .steps { display: flex; flex-direction: column; }
  
   .step {
     display: grid;
-    grid-template-columns: 28px 1fr;
+    grid-template-columns: 26px 1fr;
     gap: 14px;
-    padding-bottom: 24px;
+    padding-bottom: 22px;
     position: relative;
   }
  
   .step:not(:last-child)::before {
     content: '';
     position: absolute;
-    left: 13px;
-    top: 28px;
-    bottom: 0;
+    left: 12px; top: 26px; bottom: 0;
     width: 1px;
-    background: #e0e4ef;
+    background: #dde2ee;
   }
  
   .step-num {
-    width: 28px;
-    height: 28px;
+    width: 26px; height: 26px;
     border-radius: 50%;
     background: #1a2235;
     color: #fff;
-    font-size: 12px;
+    font-size: 11px;
     font-weight: 600;
     display: flex;
     align-items: center;
@@ -337,62 +358,54 @@
     z-index: 1;
   }
  
-  .step-body {}
- 
   .step-heading {
     font-size: 13px;
     font-weight: 600;
     color: #1a2235;
-    margin-bottom: 3px;
+    margin-bottom: 2px;
     padding-top: 4px;
   }
  
   .step-desc {
     font-size: 12px;
-    color: #6b7a99;
-    line-height: 1.6;
-  }
- 
-  /* SAMPLE OUTPUT */
-  .sample {
-    padding: 40px 44px;
-    background: #f7f8fa;
+    color: #7a89a8;
+    line-height: 1.65;
+    font-weight: 300;
   }
  
   .biz-cards {
     display: grid;
     grid-template-columns: repeat(3, 1fr);
-    gap: 10px;
-    margin-bottom: 12px;
+    gap: 9px;
+    margin-bottom: 10px;
   }
  
   .biz-card {
     background: #fff;
-    border: 1px solid #e4e8ef;
+    border: 1px solid #e2e6ef;
     border-radius: var(--radius-lg);
-    padding: 14px;
+    padding: 13px 14px;
     border-top: 3px solid transparent;
   }
  
-  .biz-card.primary  { border-top-color: #3b82f6; }
-  .biz-card.second   { border-top-color: #10b981; }
-  .biz-card.third    { border-top-color: #f59e0b; }
+  .biz-card.primary { border-top-color: #3b82f6; }
+  .biz-card.second  { border-top-color: #10b981; }
+  .biz-card.third   { border-top-color: #f59e0b; }
  
   .biz-card-header {
     display: flex;
     align-items: center;
     gap: 8px;
-    margin-bottom: 10px;
+    margin-bottom: 9px;
   }
  
   .biz-avatar {
-    width: 28px;
-    height: 28px;
-    border-radius: 7px;
+    width: 26px; height: 26px;
+    border-radius: 6px;
     display: flex;
     align-items: center;
     justify-content: center;
-    font-size: 11px;
+    font-size: 10.5px;
     font-weight: 700;
     flex-shrink: 0;
   }
@@ -401,21 +414,17 @@
   .biz-avatar.g { background: #d1fae5; color: #065f46; }
   .biz-avatar.k { background: #fef3c7; color: #92400e; }
  
-  .biz-name {
-    font-size: 12px;
-    font-weight: 600;
-    color: #1a2235;
-    line-height: 1.2;
-  }
+  .biz-name { font-size: 11.5px; font-weight: 600; color: #1a2235; line-height: 1.2; }
  
   .biz-rating {
     display: flex;
     align-items: baseline;
-    gap: 3px;
+    gap: 2px;
     margin-bottom: 2px;
   }
  
   .rating-val {
+    font-family: var(--serif);
     font-size: 22px;
     font-weight: 600;
     color: #1a2235;
@@ -423,66 +432,53 @@
     line-height: 1;
   }
  
-  .rating-denom {
-    font-size: 12px;
-    color: #9aaac0;
-  }
+  .rating-denom { font-size: 11px; color: #aab2c8; }
  
   .review-count {
-    font-size: 11px;
-    color: #9aaac0;
-    margin-bottom: 10px;
+    font-size: 10.5px;
+    color: #aab2c8;
+    margin-bottom: 9px;
+    font-weight: 300;
   }
  
   .sentiment-bar {
-    height: 4px;
+    height: 3px;
     border-radius: 2px;
-    background: #e9ecf2;
-    margin-bottom: 6px;
-    overflow: hidden;
+    background: #eaedf4;
+    margin-bottom: 5px;
     position: relative;
+    overflow: hidden;
   }
  
-  .sentiment-fill {
-    height: 100%;
-    border-radius: 2px;
-    position: absolute;
-    left: 0;
-  }
- 
-  .sentiment-fill.pos { background: #3b82f6; }
+  .sentiment-fill { height: 100%; border-radius: 2px; position: absolute; left: 0; }
  
   .sentiment-labels {
     display: flex;
     justify-content: space-between;
-    font-size: 10.5px;
-    color: #9aaac0;
+    font-size: 10px;
+    color: #aab2c8;
+    font-weight: 500;
   }
  
-  .sentiment-labels .neg { color: var(--red); }
+  .sentiment-labels .neg { color: #f87171; }
  
-  /* Winner card */
   .winner-card {
     background: #fff;
-    border: 1px solid #e4e8ef;
+    border: 1px solid #e2e6ef;
     border-radius: var(--radius-lg);
-    padding: 14px 16px;
+    padding: 13px 16px;
     display: grid;
-    grid-template-columns: auto 1fr auto;
+    grid-template-columns: 56px 1fr auto;
     align-items: center;
-    gap: 16px;
+    gap: 14px;
   }
  
-  .score-badge {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    gap: 2px;
-  }
+  .score-badge { text-align: center; }
  
   .score-num {
-    font-size: 28px;
-    font-weight: 700;
+    font-family: var(--serif);
+    font-size: 30px;
+    font-weight: 600;
     color: #1d4ed8;
     letter-spacing: -1px;
     line-height: 1;
@@ -492,35 +488,32 @@
     font-size: 9px;
     text-transform: uppercase;
     letter-spacing: 0.1em;
-    color: #9aaac0;
+    color: #aab2c8;
     font-weight: 600;
   }
- 
-  .winner-info {}
  
   .winner-badge {
     font-size: 9px;
     text-transform: uppercase;
     letter-spacing: 0.1em;
-    color: #f59e0b;
+    color: #d97706;
     font-weight: 700;
-    margin-bottom: 3px;
-    display: flex;
-    align-items: center;
-    gap: 4px;
+    margin-bottom: 2px;
   }
  
   .winner-name {
+    font-family: var(--serif);
     font-size: 14px;
     font-weight: 600;
     color: #1a2235;
-    margin-bottom: 3px;
+    margin-bottom: 2px;
   }
  
   .winner-desc {
-    font-size: 11.5px;
-    color: #6b7a99;
+    font-size: 11px;
+    color: #7a89a8;
     line-height: 1.5;
+    font-weight: 300;
   }
  
   .winner-tags {
@@ -531,7 +524,7 @@
   }
  
   .tag {
-    font-size: 10.5px;
+    font-size: 10px;
     font-weight: 500;
     padding: 2px 8px;
     border-radius: 4px;
@@ -544,10 +537,9 @@
 </head>
 <body>
  
-<!-- ── HERO ── -->
 <section class="hero">
   <div class="hero-left">
-    <div class="hero-content">
+    <div>
       <h1>Turn customer reviews into<br><em>competitive intelligence</em></h1>
       <p class="hero-subtitle">Benchmark up to 5 businesses side-by-side — sentiment, ratings, trends, and top mentions from real Google Maps reviews.</p>
       <ul class="features">
@@ -557,7 +549,19 @@
         <li><span class="dot dot-red"></span>Top mentions from high &amp; low reviews</li>
         <li><span class="dot dot-purple"></span>Competitive benchmark + score</li>
       </ul>
+ 
+      <div class="testimonial">
+        <p class="testimonial-quote">"We identified a service gap our top competitor had that we weren't capitalising on — within a week of running this. It's like having a research analyst on demand."</p>
+        <div class="testimonial-author">
+          <div class="author-avatar">SR</div>
+          <div>
+            <div class="author-name">Sarah R.</div>
+            <div class="author-role">Head of Strategy, F&amp;B Group · Singapore</div>
+          </div>
+        </div>
+      </div>
     </div>
+ 
     <div class="stats">
       <div class="stat">
         <div class="stat-value">30+</div>
@@ -583,58 +587,54 @@
     <p class="field-hint">serpapi.com — 100 free searches included</p>
  
     <div class="biz-section-header">
-      <label class="field-label" style="margin:0">Businesses to compare <span style="color:var(--text-muted);font-weight:400;text-transform:none;letter-spacing:0">(up to 5)</span></label>
+      <label class="field-label" style="margin:0">Businesses to compare <span style="text-transform:none;letter-spacing:0;font-weight:300;color:var(--text-muted)">(up to 5)</span></label>
       <button class="add-btn">+ Add</button>
     </div>
-    <p class="field-hint" style="margin-top:-4px;margin-bottom:10px">The first entry is your primary business — the rest are competitors.</p>
+    <p class="field-hint" style="margin-top:4px;margin-bottom:10px">The first entry is your primary business — the rest are competitors.</p>
  
     <div class="biz-row">
       <div class="biz-indicator">
         <span class="biz-dot" style="background:#3b82f6"></span>
-        <input type="text" placeholder="Primary business" style="height:36px;font-size:12px">
+        <input type="text" placeholder="Primary business" style="height:36px">
       </div>
-      <input type="text" placeholder="Paste Google Maps URL…" style="height:36px;font-size:12px">
+      <input type="text" placeholder="Paste Google Maps URL…" style="height:36px">
     </div>
  
     <div class="biz-row">
       <div class="biz-indicator">
         <span class="biz-dot" style="background:#34d399"></span>
-        <input type="text" placeholder="Competitor name" style="height:36px;font-size:12px">
+        <input type="text" placeholder="Competitor name" style="height:36px">
       </div>
-      <input type="text" placeholder="Paste Google Maps URL…" style="height:36px;font-size:12px">
+      <input type="text" placeholder="Paste Google Maps URL…" style="height:36px">
     </div>
  
     <button class="run-btn">Run analysis →</button>
   </div>
 </section>
  
-<!-- ── BOTTOM ── -->
 <section class="bottom">
- 
-  <!-- HOW IT WORKS -->
   <div class="how">
     <p class="section-eyebrow">How it works</p>
     <p class="section-title">Three steps to insights</p>
     <p class="section-sub">From Google Maps to competitive intelligence in under a minute.</p>
- 
     <div class="steps">
       <div class="step">
         <div class="step-num">1</div>
-        <div class="step-body">
+        <div>
           <p class="step-heading">Create a SerpAPI account</p>
           <p class="step-desc">Sign up at serpapi.com — the free tier includes 100 searches. Copy your API key from the dashboard and paste it above.</p>
         </div>
       </div>
       <div class="step">
         <div class="step-num">2</div>
-        <div class="step-body">
+        <div>
           <p class="step-heading">Find businesses on Google Maps</p>
-          <p class="step-desc">Search for any business on Google Maps, click its listing to open the place page, then copy the full URL from your address bar.</p>
+          <p class="step-desc">Search for any business, click its listing to open the place page, then copy the full URL from your address bar.</p>
         </div>
       </div>
       <div class="step">
         <div class="step-num">3</div>
-        <div class="step-body">
+        <div>
           <p class="step-heading">Paste URLs and run</p>
           <p class="step-desc">Add up to 5 Google Maps URLs. The first is your primary business — the others are competitors. Hit Run to get your dashboard.</p>
         </div>
@@ -642,81 +642,50 @@
     </div>
   </div>
  
-  <!-- SAMPLE OUTPUT -->
   <div class="sample">
     <p class="section-eyebrow">Sample output</p>
     <p class="section-title">Singapore cafes benchmark</p>
-    <p class="section-sub" style="margin-bottom:16px">Live data from Google Maps reviews.</p>
+    <p class="section-sub" style="margin-bottom:14px">Live data from Google Maps reviews.</p>
  
     <div class="biz-cards">
-      <!-- September Coffee -->
       <div class="biz-card primary">
         <div class="biz-card-header">
           <div class="biz-avatar s">S</div>
           <div class="biz-name">September Coffee</div>
         </div>
-        <div class="biz-rating">
-          <span class="rating-val">4.2</span>
-          <span class="rating-denom">/5</span>
-        </div>
+        <div class="biz-rating"><span class="rating-val">4.2</span><span class="rating-denom">/5</span></div>
         <p class="review-count">628 reviews</p>
-        <div class="sentiment-bar">
-          <div class="sentiment-fill pos" style="width:72%"></div>
-        </div>
-        <div class="sentiment-labels">
-          <span>72%</span>
-          <span class="neg">18%</span>
-        </div>
+        <div class="sentiment-bar"><div class="sentiment-fill" style="width:72%;background:#3b82f6"></div></div>
+        <div class="sentiment-labels"><span>72%</span><span class="neg">18%</span></div>
       </div>
- 
-      <!-- Cafe Gyoen -->
       <div class="biz-card second">
         <div class="biz-card-header">
           <div class="biz-avatar g">G</div>
           <div class="biz-name">Cafe Gyoen</div>
         </div>
-        <div class="biz-rating">
-          <span class="rating-val">4.6</span>
-          <span class="rating-denom">/5</span>
-        </div>
+        <div class="biz-rating"><span class="rating-val">4.6</span><span class="rating-denom">/5</span></div>
         <p class="review-count">450 reviews</p>
-        <div class="sentiment-bar">
-          <div class="sentiment-fill pos" style="width:88%;background:#10b981"></div>
-        </div>
-        <div class="sentiment-labels">
-          <span>88%</span>
-          <span class="neg">6%</span>
-        </div>
+        <div class="sentiment-bar"><div class="sentiment-fill" style="width:88%;background:#10b981"></div></div>
+        <div class="sentiment-labels"><span>88%</span><span class="neg">6%</span></div>
       </div>
- 
-      <!-- Korio -->
       <div class="biz-card third">
         <div class="biz-card-header">
           <div class="biz-avatar k">K</div>
           <div class="biz-name">Korio</div>
         </div>
-        <div class="biz-rating">
-          <span class="rating-val">4.1</span>
-          <span class="rating-denom">/5</span>
-        </div>
+        <div class="biz-rating"><span class="rating-val">4.1</span><span class="rating-denom">/5</span></div>
         <p class="review-count">312 reviews</p>
-        <div class="sentiment-bar">
-          <div class="sentiment-fill pos" style="width:65%;background:#f59e0b"></div>
-        </div>
-        <div class="sentiment-labels">
-          <span>65%</span>
-          <span class="neg">22%</span>
-        </div>
+        <div class="sentiment-bar"><div class="sentiment-fill" style="width:65%;background:#f59e0b"></div></div>
+        <div class="sentiment-labels"><span>65%</span><span class="neg">22%</span></div>
       </div>
     </div>
  
-    <!-- Winner card -->
     <div class="winner-card">
       <div class="score-badge">
         <div class="score-num">92</div>
         <div class="score-label">Score</div>
       </div>
-      <div class="winner-info">
+      <div>
         <div class="winner-badge">🏆 Top performer</div>
         <div class="winner-name">Cafe Gyoen</div>
         <div class="winner-desc">Highest rating (4.6/5), strongest sentiment (88%), no recurring negative themes.</div>
@@ -728,7 +697,7 @@
       </div>
     </div>
   </div>
- 
 </section>
+ 
 </body>
 </html>
