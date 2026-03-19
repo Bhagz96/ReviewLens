@@ -3,560 +3,610 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>ReviewLens — Competitive Intelligence</title>
+<title>ReviewLens</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
-<link href="https://fonts.googleapis.com/css2?family=Source+Serif+4:ital,wght@0,300;0,400;0,600;1,300;1,400&family=IBM+Plex+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Lora:ital,wght@0,400;0,500;0,600;1,400;1,500&family=Figtree:wght@300;400;500;600&display=swap" rel="stylesheet">
 <style>
-  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
- 
-  :root {
-    --navy: #0d1829;
-    --navy-mid: #141e30;
-    --navy-card: #1a2640;
-    --navy-border: rgba(255,255,255,0.07);
-    --blue: #3b82f6;
-    --blue-bright: #93c5fd;
-    --blue-dim: rgba(59,130,246,0.1);
-    --text-primary: #eef2ff;
-    --text-secondary: rgba(238,242,255,0.52);
-    --text-muted: rgba(238,242,255,0.28);
-    --green: #34d399;
-    --red: #f87171;
-    --amber: #fbbf24;
-    --radius: 6px;
-    --radius-lg: 10px;
-    --sans: 'IBM Plex Sans', sans-serif;
-    --serif: 'Source Serif 4', Georgia, serif;
-  }
- 
-  body {
-    font-family: var(--sans);
-    background: var(--navy);
-    color: var(--text-primary);
-    font-size: 13.5px;
-    line-height: 1.55;
-  }
- 
-  .hero {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    min-height: 420px;
-    border-bottom: 1px solid var(--navy-border);
-  }
- 
-  .hero-left {
-    padding: 40px 48px 36px 52px;
-    display: flex;
-    flex-direction: column;
-    justify-content: space-between;
-    border-right: 1px solid var(--navy-border);
-  }
- 
-  .hero h1 {
-    font-family: var(--serif);
-    font-size: 34px;
-    font-weight: 600;
-    line-height: 1.15;
-    letter-spacing: -0.3px;
-    margin-bottom: 10px;
-  }
- 
-  .hero h1 em {
-    font-style: italic;
-    font-weight: 300;
-    color: var(--blue-bright);
-  }
- 
-  .hero-subtitle {
-    font-size: 13px;
-    color: var(--text-secondary);
-    line-height: 1.65;
-    max-width: 360px;
-    margin-bottom: 18px;
-    font-weight: 300;
-  }
- 
-  .features {
-    list-style: none;
-    display: flex;
-    flex-direction: column;
-    gap: 6px;
-  }
- 
-  .features li {
-    font-size: 12.5px;
-    color: var(--text-secondary);
-    display: flex;
-    align-items: center;
-    gap: 9px;
-    font-weight: 300;
-  }
- 
-  .dot { width: 4px; height: 4px; border-radius: 50%; flex-shrink: 0; }
-  .dot-blue   { background: var(--blue-bright); }
-  .dot-amber  { background: var(--amber); }
-  .dot-red    { background: var(--red); }
-  .dot-purple { background: #c4b5fd; }
- 
-  .testimonial {
-    margin-top: 22px;
-    border-left: 2px solid rgba(147,197,253,0.25);
-    padding: 10px 0 10px 16px;
-  }
- 
-  .testimonial-quote {
-    font-family: var(--serif);
-    font-style: italic;
-    font-weight: 300;
-    font-size: 13px;
-    color: rgba(238,242,255,0.68);
-    line-height: 1.7;
-    margin-bottom: 10px;
-  }
- 
-  .testimonial-author {
-    display: flex;
-    align-items: center;
-    gap: 8px;
-  }
- 
-  .author-avatar {
-    width: 22px;
-    height: 22px;
-    border-radius: 50%;
-    background: rgba(147,197,253,0.1);
-    border: 1px solid rgba(147,197,253,0.18);
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    font-size: 9px;
-    font-weight: 600;
-    color: var(--blue-bright);
-    flex-shrink: 0;
-  }
- 
-  .author-name {
-    font-size: 11.5px;
-    font-weight: 500;
-    color: var(--text-secondary);
-  }
- 
-  .author-role {
-    font-size: 10.5px;
-    color: var(--text-muted);
-    font-weight: 300;
-  }
- 
-  .stats {
-    display: flex;
-    border-top: 1px solid var(--navy-border);
-    padding-top: 18px;
-    margin-top: 22px;
-  }
- 
-  .stat { flex: 1; padding-right: 20px; }
-  .stat + .stat { padding-left: 20px; border-left: 1px solid var(--navy-border); }
- 
-  .stat-value {
-    font-family: var(--serif);
-    font-size: 24px;
-    font-weight: 600;
-    color: var(--blue-bright);
-    letter-spacing: -0.5px;
-    line-height: 1;
-    margin-bottom: 3px;
-  }
- 
-  .stat-label {
-    font-size: 10px;
-    text-transform: uppercase;
-    letter-spacing: 0.1em;
-    color: var(--text-muted);
-    font-weight: 500;
-  }
- 
-  .hero-right {
-    padding: 36px 44px;
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
-    background: var(--navy-mid);
-  }
- 
-  .panel-title {
-    font-family: var(--serif);
-    font-size: 17px;
-    font-weight: 600;
-    margin-bottom: 3px;
-  }
- 
-  .panel-sub {
-    font-size: 12px;
-    color: var(--text-muted);
-    margin-bottom: 22px;
-    font-weight: 300;
-  }
- 
-  .field-label {
-    font-size: 10px;
-    text-transform: uppercase;
-    letter-spacing: 0.1em;
-    color: var(--text-muted);
-    font-weight: 600;
-    margin-bottom: 6px;
-    display: block;
-  }
- 
-  .field-hint {
-    font-size: 11px;
-    color: var(--text-muted);
-    margin-top: 4px;
-    margin-bottom: 16px;
-    font-weight: 300;
-  }
- 
-  input[type="text"] {
-    width: 100%;
-    height: 37px;
-    background: var(--navy-card);
-    border: 1px solid var(--navy-border);
-    border-radius: var(--radius);
-    color: var(--text-primary);
-    font-family: var(--sans);
-    font-size: 12.5px;
-    font-weight: 300;
-    padding: 0 12px;
-    outline: none;
-    transition: border-color 0.15s;
-  }
- 
-  input[type="text"]::placeholder { color: var(--text-muted); }
-  input[type="text"]:focus { border-color: rgba(59,130,246,0.5); }
- 
-  .biz-section-header {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    margin-bottom: 5px;
-  }
- 
-  .add-btn {
-    font-size: 11px;
-    color: var(--blue-bright);
-    background: var(--blue-dim);
-    border: 1px solid rgba(147,197,253,0.15);
-    border-radius: var(--radius);
-    padding: 3px 10px;
-    cursor: pointer;
-    font-family: var(--sans);
-    font-weight: 500;
-  }
- 
-  .biz-row {
-    display: grid;
-    grid-template-columns: 126px 1fr;
-    gap: 7px;
-    margin-bottom: 7px;
-    align-items: center;
-  }
- 
-  .biz-indicator {
-    display: grid;
-    grid-template-columns: 10px 1fr;
-    align-items: center;
-    gap: 6px;
-  }
- 
-  .biz-dot { width: 6px; height: 6px; border-radius: 50%; }
- 
-  .run-btn {
-    width: 100%;
-    height: 40px;
-    background: var(--blue);
-    border: none;
-    border-radius: var(--radius);
-    color: #fff;
-    font-family: var(--sans);
-    font-size: 13.5px;
-    font-weight: 500;
-    cursor: pointer;
-    margin-top: 14px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    gap: 7px;
-    transition: background 0.15s;
-  }
-  .run-btn:hover { background: #2563eb; }
- 
-  /* BOTTOM */
-  .bottom {
-    display: grid;
-    grid-template-columns: 1fr 1.4fr;
-    background: #f5f6f8;
-    color: #1a2235;
-  }
- 
-  .how { padding: 36px 44px; border-right: 1px solid #e2e6ef; }
-  .sample { padding: 36px 44px; }
- 
-  .section-eyebrow {
-    font-size: 10px;
-    text-transform: uppercase;
-    letter-spacing: 0.12em;
-    color: #8492b0;
-    font-weight: 600;
-    margin-bottom: 4px;
-  }
- 
-  .section-title {
-    font-family: var(--serif);
-    font-size: 20px;
-    font-weight: 600;
-    color: #1a2235;
-    margin-bottom: 3px;
-    letter-spacing: -0.2px;
-  }
- 
-  .section-sub {
-    font-size: 12.5px;
-    color: #8492b0;
-    margin-bottom: 24px;
-    font-weight: 300;
-  }
- 
-  .steps { display: flex; flex-direction: column; }
- 
-  .step {
-    display: grid;
-    grid-template-columns: 26px 1fr;
-    gap: 14px;
-    padding-bottom: 22px;
-    position: relative;
-  }
- 
-  .step:not(:last-child)::before {
-    content: '';
-    position: absolute;
-    left: 12px; top: 26px; bottom: 0;
-    width: 1px;
-    background: #dde2ee;
-  }
- 
-  .step-num {
-    width: 26px; height: 26px;
-    border-radius: 50%;
-    background: #1a2235;
-    color: #fff;
-    font-size: 11px;
-    font-weight: 600;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    flex-shrink: 0;
-    position: relative;
-    z-index: 1;
-  }
- 
-  .step-heading {
-    font-size: 13px;
-    font-weight: 600;
-    color: #1a2235;
-    margin-bottom: 2px;
-    padding-top: 4px;
-  }
- 
-  .step-desc {
-    font-size: 12px;
-    color: #7a89a8;
-    line-height: 1.65;
-    font-weight: 300;
-  }
- 
-  .biz-cards {
-    display: grid;
-    grid-template-columns: repeat(3, 1fr);
-    gap: 9px;
-    margin-bottom: 10px;
-  }
- 
-  .biz-card {
-    background: #fff;
-    border: 1px solid #e2e6ef;
-    border-radius: var(--radius-lg);
-    padding: 13px 14px;
-    border-top: 3px solid transparent;
-  }
- 
-  .biz-card.primary { border-top-color: #3b82f6; }
-  .biz-card.second  { border-top-color: #10b981; }
-  .biz-card.third   { border-top-color: #f59e0b; }
- 
-  .biz-card-header {
-    display: flex;
-    align-items: center;
-    gap: 8px;
-    margin-bottom: 9px;
-  }
- 
-  .biz-avatar {
-    width: 26px; height: 26px;
-    border-radius: 6px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    font-size: 10.5px;
-    font-weight: 700;
-    flex-shrink: 0;
-  }
- 
-  .biz-avatar.s { background: #dbeafe; color: #1d4ed8; }
-  .biz-avatar.g { background: #d1fae5; color: #065f46; }
-  .biz-avatar.k { background: #fef3c7; color: #92400e; }
- 
-  .biz-name { font-size: 11.5px; font-weight: 600; color: #1a2235; line-height: 1.2; }
- 
-  .biz-rating {
-    display: flex;
-    align-items: baseline;
-    gap: 2px;
-    margin-bottom: 2px;
-  }
- 
-  .rating-val {
-    font-family: var(--serif);
-    font-size: 22px;
-    font-weight: 600;
-    color: #1a2235;
-    letter-spacing: -0.5px;
-    line-height: 1;
-  }
- 
-  .rating-denom { font-size: 11px; color: #aab2c8; }
- 
-  .review-count {
-    font-size: 10.5px;
-    color: #aab2c8;
-    margin-bottom: 9px;
-    font-weight: 300;
-  }
- 
-  .sentiment-bar {
-    height: 3px;
-    border-radius: 2px;
-    background: #eaedf4;
-    margin-bottom: 5px;
-    position: relative;
-    overflow: hidden;
-  }
- 
-  .sentiment-fill { height: 100%; border-radius: 2px; position: absolute; left: 0; }
- 
-  .sentiment-labels {
-    display: flex;
-    justify-content: space-between;
-    font-size: 10px;
-    color: #aab2c8;
-    font-weight: 500;
-  }
- 
-  .sentiment-labels .neg { color: #f87171; }
- 
-  .winner-card {
-    background: #fff;
-    border: 1px solid #e2e6ef;
-    border-radius: var(--radius-lg);
-    padding: 13px 16px;
-    display: grid;
-    grid-template-columns: 56px 1fr auto;
-    align-items: center;
-    gap: 14px;
-  }
- 
-  .score-badge { text-align: center; }
- 
-  .score-num {
-    font-family: var(--serif);
-    font-size: 30px;
-    font-weight: 600;
-    color: #1d4ed8;
-    letter-spacing: -1px;
-    line-height: 1;
-  }
- 
-  .score-label {
-    font-size: 9px;
-    text-transform: uppercase;
-    letter-spacing: 0.1em;
-    color: #aab2c8;
-    font-weight: 600;
-  }
- 
-  .winner-badge {
-    font-size: 9px;
-    text-transform: uppercase;
-    letter-spacing: 0.1em;
-    color: #d97706;
-    font-weight: 700;
-    margin-bottom: 2px;
-  }
- 
-  .winner-name {
-    font-family: var(--serif);
-    font-size: 14px;
-    font-weight: 600;
-    color: #1a2235;
-    margin-bottom: 2px;
-  }
- 
-  .winner-desc {
-    font-size: 11px;
-    color: #7a89a8;
-    line-height: 1.5;
-    font-weight: 300;
-  }
- 
-  .winner-tags {
-    display: flex;
-    flex-direction: column;
-    gap: 4px;
-    align-items: flex-end;
-  }
- 
-  .tag {
-    font-size: 10px;
-    font-weight: 500;
-    padding: 2px 8px;
-    border-radius: 4px;
-    white-space: nowrap;
-  }
- 
-  .tag.pos { background: #d1fae5; color: #065f46; }
-  .tag.neg { background: #fee2e2; color: #991b1b; }
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+ 
+:root {
+  --ink:        #0f1623;
+  --ink-mid:    #162032;
+  --ink-card:   #1b2840;
+  --border:     rgba(255,255,255,0.08);
+  --accent:     #4f8ef7;
+  --accent-lt:  #a8c8fc;
+  --accent-dim: rgba(79,142,247,0.1);
+  --t1:         #e8edf8;
+  --t2:         rgba(232,237,248,0.5);
+  --t3:         rgba(232,237,248,0.26);
+  --green:  #2dd4a0;
+  --amber:  #f9bc4a;
+  --red:    #f27272;
+  --r:  6px;
+  --rl: 10px;
+  --serif: 'Lora', Georgia, serif;
+  --sans:  'Figtree', system-ui, sans-serif;
+}
+ 
+body {
+  font-family: var(--sans);
+  background: var(--ink);
+  color: var(--t1);
+  font-size: 13px;
+  line-height: 1.6;
+  -webkit-font-smoothing: antialiased;
+}
+ 
+/* ━━ HERO ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ */
+.hero {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  border-bottom: 1px solid var(--border);
+}
+ 
+/* LEFT */
+.hl {
+  padding: 44px 50px 40px 54px;
+  border-right: 1px solid var(--border);
+  display: flex;
+  flex-direction: column;
+  gap: 0;
+}
+ 
+.eyebrow {
+  font-size: 10px;
+  font-weight: 600;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--accent-lt);
+  margin-bottom: 12px;
+  opacity: 0.7;
+}
+ 
+h1 {
+  font-family: var(--serif);
+  font-size: 30px;
+  font-weight: 500;
+  line-height: 1.2;
+  letter-spacing: -0.2px;
+  color: var(--t1);
+  margin-bottom: 12px;
+}
+ 
+h1 em {
+  font-style: italic;
+  color: var(--accent-lt);
+  font-weight: 400;
+}
+ 
+.subtitle {
+  font-size: 13px;
+  font-weight: 300;
+  color: var(--t2);
+  line-height: 1.7;
+  max-width: 340px;
+  margin-bottom: 22px;
+}
+ 
+/* Feature grid — 2 cols */
+.feat-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 8px 16px;
+  margin-bottom: 24px;
+}
+ 
+.feat {
+  display: flex;
+  align-items: flex-start;
+  gap: 8px;
+  font-size: 12px;
+  font-weight: 300;
+  color: var(--t2);
+  line-height: 1.5;
+}
+ 
+.feat-icon {
+  width: 16px;
+  height: 16px;
+  border-radius: 4px;
+  flex-shrink: 0;
+  margin-top: 1px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+ 
+.fi-blue   { background: rgba(79,142,247,0.18); }
+.fi-green  { background: rgba(45,212,160,0.18); }
+.fi-amber  { background: rgba(249,188,74,0.18);  }
+.fi-red    { background: rgba(242,114,114,0.18); }
+ 
+.feat-icon svg { width: 8px; height: 8px; }
+ 
+/* Testimonial */
+.testi {
+  background: rgba(255,255,255,0.03);
+  border: 1px solid var(--border);
+  border-left: 2px solid rgba(168,200,252,0.3);
+  border-radius: 0 var(--r) var(--r) 0;
+  padding: 12px 14px;
+  margin-bottom: 24px;
+}
+ 
+.testi-q {
+  font-family: var(--serif);
+  font-style: italic;
+  font-weight: 400;
+  font-size: 12.5px;
+  color: rgba(232,237,248,0.65);
+  line-height: 1.7;
+  margin-bottom: 9px;
+}
+ 
+.testi-who {
+  display: flex;
+  align-items: center;
+  gap: 7px;
+}
+ 
+.testi-av {
+  width: 20px;
+  height: 20px;
+  border-radius: 50%;
+  background: rgba(79,142,247,0.15);
+  border: 1px solid rgba(168,200,252,0.2);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 8px;
+  font-weight: 600;
+  color: var(--accent-lt);
+  flex-shrink: 0;
+}
+ 
+.testi-name { font-size: 11px; font-weight: 500; color: var(--t2); }
+.testi-role { font-size: 10.5px; color: var(--t3); font-weight: 300; }
+ 
+/* Stats */
+.stats {
+  display: flex;
+  border-top: 1px solid var(--border);
+  padding-top: 18px;
+  margin-top: auto;
+}
+ 
+.stat        { flex: 1; }
+.stat + .stat { border-left: 1px solid var(--border); padding-left: 20px; }
+ 
+.stat-n {
+  font-family: var(--serif);
+  font-size: 26px;
+  font-weight: 500;
+  color: var(--accent-lt);
+  line-height: 1;
+  margin-bottom: 3px;
+  letter-spacing: -0.5px;
+}
+ 
+.stat-l {
+  font-size: 9.5px;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  color: var(--t3);
+  font-weight: 600;
+}
+ 
+/* RIGHT — form */
+.hr {
+  padding: 36px 44px;
+  background: var(--ink-mid);
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+}
+ 
+.panel-h {
+  font-family: var(--serif);
+  font-size: 16px;
+  font-weight: 500;
+  margin-bottom: 3px;
+}
+ 
+.panel-s {
+  font-size: 11.5px;
+  color: var(--t3);
+  font-weight: 300;
+  margin-bottom: 22px;
+}
+ 
+.lbl {
+  display: block;
+  font-size: 9.5px;
+  text-transform: uppercase;
+  letter-spacing: 0.12em;
+  color: var(--t3);
+  font-weight: 600;
+  margin-bottom: 6px;
+}
+ 
+.hint {
+  font-size: 10.5px;
+  color: var(--t3);
+  font-weight: 300;
+  margin-top: 4px;
+  margin-bottom: 16px;
+}
+ 
+input {
+  width: 100%;
+  height: 36px;
+  background: var(--ink-card);
+  border: 1px solid var(--border);
+  border-radius: var(--r);
+  color: var(--t1);
+  font-family: var(--sans);
+  font-size: 12px;
+  font-weight: 300;
+  padding: 0 12px;
+  outline: none;
+  transition: border-color 0.15s;
+}
+ 
+input::placeholder { color: var(--t3); }
+input:focus        { border-color: rgba(79,142,247,0.45); }
+ 
+.row-hd {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 5px;
+}
+ 
+.add {
+  font-size: 10.5px;
+  color: var(--accent-lt);
+  background: var(--accent-dim);
+  border: 1px solid rgba(168,200,252,0.12);
+  border-radius: var(--r);
+  padding: 3px 9px;
+  cursor: pointer;
+  font-family: var(--sans);
+  font-weight: 500;
+}
+ 
+.brow {
+  display: grid;
+  grid-template-columns: 118px 1fr;
+  gap: 6px;
+  margin-bottom: 6px;
+}
+ 
+.brow-l {
+  display: grid;
+  grid-template-columns: 8px 1fr;
+  align-items: center;
+  gap: 6px;
+}
+ 
+.bdot { width: 6px; height: 6px; border-radius: 50%; }
+ 
+.run {
+  margin-top: 14px;
+  width: 100%;
+  height: 40px;
+  background: var(--accent);
+  border: none;
+  border-radius: var(--r);
+  color: #fff;
+  font-family: var(--sans);
+  font-size: 13px;
+  font-weight: 500;
+  cursor: pointer;
+  letter-spacing: 0.01em;
+  transition: background 0.15s;
+}
+.run:hover { background: #3b7ef0; }
+ 
+/* ━━ BOTTOM ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ */
+.bottom {
+  display: grid;
+  grid-template-columns: 1fr 1.45fr;
+  background: #f4f5f8;
+  color: #18243a;
+}
+ 
+.how  { padding: 36px 44px; border-right: 1px solid #dfe3ee; }
+.out  { padding: 36px 44px; }
+ 
+.sec-eye {
+  font-size: 9.5px;
+  text-transform: uppercase;
+  letter-spacing: 0.14em;
+  color: #8898bb;
+  font-weight: 600;
+  margin-bottom: 4px;
+}
+ 
+.sec-h {
+  font-family: var(--serif);
+  font-size: 19px;
+  font-weight: 500;
+  color: #18243a;
+  margin-bottom: 3px;
+}
+ 
+.sec-s {
+  font-size: 12px;
+  color: #8898bb;
+  font-weight: 300;
+  margin-bottom: 22px;
+}
+ 
+/* Steps */
+.steps { display: flex; flex-direction: column; }
+ 
+.step {
+  display: grid;
+  grid-template-columns: 24px 1fr;
+  gap: 13px;
+  padding-bottom: 20px;
+  position: relative;
+}
+ 
+.step:not(:last-child)::after {
+  content: '';
+  position: absolute;
+  left: 11px; top: 24px; bottom: 0;
+  width: 1px;
+  background: #dce0eb;
+}
+ 
+.sn {
+  width: 24px; height: 24px;
+  border-radius: 50%;
+  background: #18243a;
+  color: #fff;
+  font-size: 10.5px;
+  font-weight: 600;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  position: relative;
+  z-index: 1;
+}
+ 
+.sh {
+  font-size: 12.5px;
+  font-weight: 600;
+  color: #18243a;
+  margin-bottom: 2px;
+  padding-top: 3px;
+}
+ 
+.sd {
+  font-size: 11.5px;
+  color: #7a8bab;
+  line-height: 1.65;
+  font-weight: 300;
+}
+ 
+/* Business cards */
+.bcards {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 8px;
+  margin-bottom: 9px;
+}
+ 
+.bc {
+  background: #fff;
+  border: 1px solid #e0e4ee;
+  border-top: 3px solid transparent;
+  border-radius: var(--rl);
+  padding: 12px 13px;
+}
+ 
+.bc.p { border-top-color: #4f8ef7; }
+.bc.g { border-top-color: #2dd4a0; }
+.bc.k { border-top-color: #f9bc4a; }
+ 
+.bc-hd {
+  display: flex;
+  align-items: center;
+  gap: 7px;
+  margin-bottom: 8px;
+}
+ 
+.bav {
+  width: 24px; height: 24px;
+  border-radius: 5px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 10px;
+  font-weight: 700;
+  flex-shrink: 0;
+}
+ 
+.bav.s { background: #dbeafe; color: #1d4ed8; }
+.bav.g { background: #ccfbef; color: #065f46; }
+.bav.k { background: #fef3c7; color: #92400e; }
+ 
+.bn { font-size: 11px; font-weight: 600; color: #18243a; line-height: 1.25; }
+ 
+.br {
+  display: flex;
+  align-items: baseline;
+  gap: 2px;
+  margin-bottom: 1px;
+}
+ 
+.rv {
+  font-family: var(--serif);
+  font-size: 21px;
+  font-weight: 500;
+  color: #18243a;
+  letter-spacing: -0.3px;
+  line-height: 1;
+}
+ 
+.rd { font-size: 10.5px; color: #b0bacf; }
+ 
+.rc {
+  font-size: 10px;
+  color: #b0bacf;
+  font-weight: 300;
+  margin-bottom: 8px;
+}
+ 
+.sbar {
+  height: 3px;
+  border-radius: 2px;
+  background: #eaeef5;
+  position: relative;
+  overflow: hidden;
+  margin-bottom: 5px;
+}
+ 
+.sfill { height: 100%; border-radius: 2px; position: absolute; left: 0; }
+ 
+.slabs {
+  display: flex;
+  justify-content: space-between;
+  font-size: 9.5px;
+  color: #b0bacf;
+  font-weight: 500;
+}
+ 
+.slabs .neg { color: #f27272; }
+ 
+/* Winner */
+.wcard {
+  background: #fff;
+  border: 1px solid #e0e4ee;
+  border-radius: var(--rl);
+  padding: 12px 15px;
+  display: grid;
+  grid-template-columns: 50px 1fr auto;
+  align-items: center;
+  gap: 13px;
+}
+ 
+.wscore { text-align: center; }
+ 
+.wsn {
+  font-family: var(--serif);
+  font-size: 28px;
+  font-weight: 500;
+  color: #1d4ed8;
+  letter-spacing: -1px;
+  line-height: 1;
+}
+ 
+.wsl {
+  font-size: 8.5px;
+  text-transform: uppercase;
+  letter-spacing: 0.12em;
+  color: #b0bacf;
+  font-weight: 600;
+}
+ 
+.wb {
+  font-size: 8.5px;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  color: #d97706;
+  font-weight: 700;
+  margin-bottom: 2px;
+}
+ 
+.wn {
+  font-family: var(--serif);
+  font-size: 13.5px;
+  font-weight: 500;
+  color: #18243a;
+  margin-bottom: 2px;
+}
+ 
+.wd {
+  font-size: 11px;
+  color: #7a8bab;
+  line-height: 1.5;
+  font-weight: 300;
+}
+ 
+.wtags {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  align-items: flex-end;
+}
+ 
+.tag {
+  font-size: 9.5px;
+  font-weight: 500;
+  padding: 2px 7px;
+  border-radius: 4px;
+  white-space: nowrap;
+}
+ 
+.tag.pos { background: #d1fae5; color: #065f46; }
+.tag.neg { background: #fee2e2; color: #991b1b; }
 </style>
 </head>
 <body>
  
 <section class="hero">
-  <div class="hero-left">
-    <div>
-      <h1>Turn customer reviews into<br><em>competitive intelligence</em></h1>
-      <p class="hero-subtitle">Benchmark up to 5 businesses side-by-side — sentiment, ratings, trends, and top mentions from real Google Maps reviews.</p>
-      <ul class="features">
-        <li><span class="dot dot-blue"></span>Side-by-side rating comparison</li>
-        <li><span class="dot dot-blue"></span>Sentiment % breakdown per business</li>
-        <li><span class="dot dot-amber"></span>Ratings over time (multi-year)</li>
-        <li><span class="dot dot-red"></span>Top mentions from high &amp; low reviews</li>
-        <li><span class="dot dot-purple"></span>Competitive benchmark + score</li>
-      </ul>
  
-      <div class="testimonial">
-        <p class="testimonial-quote">"We identified a service gap our top competitor had that we weren't capitalising on — within a week of running this. It's like having a research analyst on demand."</p>
-        <div class="testimonial-author">
-          <div class="author-avatar">SR</div>
+  <!-- LEFT -->
+  <div class="hl">
+    <div>
+      <p class="eyebrow">Competitive intelligence</p>
+      <h1>Turn customer reviews<br>into <em>strategic insight</em></h1>
+      <p class="subtitle">Benchmark up to 5 businesses side-by-side — sentiment, ratings, trends, and top mentions from real Google Maps reviews.</p>
+ 
+      <div class="feat-grid">
+        <div class="feat">
+          <div class="feat-icon fi-blue">
+            <svg viewBox="0 0 8 8" fill="none"><rect x="0" y="4" width="2" height="4" rx="0.5" fill="#4f8ef7"/><rect x="3" y="2" width="2" height="6" rx="0.5" fill="#4f8ef7"/><rect x="6" y="0" width="2" height="8" rx="0.5" fill="#4f8ef7"/></svg>
+          </div>
+          Side-by-side rating comparison
+        </div>
+        <div class="feat">
+          <div class="feat-icon fi-green">
+            <svg viewBox="0 0 8 8" fill="none"><circle cx="4" cy="4" r="3.5" stroke="#2dd4a0" stroke-width="1"/><path d="M4 4 L4 1.5" stroke="#2dd4a0" stroke-width="1" stroke-linecap="round"/><path d="M4 4 L6 5.2" stroke="#2dd4a0" stroke-width="1" stroke-linecap="round"/></svg>
+          </div>
+          Sentiment % breakdown
+        </div>
+        <div class="feat">
+          <div class="feat-icon fi-amber">
+            <svg viewBox="0 0 8 8" fill="none"><path d="M1 6 L3 3.5 L5 5 L7 1.5" stroke="#f9bc4a" stroke-width="1" stroke-linecap="round" stroke-linejoin="round"/></svg>
+          </div>
+          Ratings over time (multi-year)
+        </div>
+        <div class="feat">
+          <div class="feat-icon fi-red">
+            <svg viewBox="0 0 8 8" fill="none"><path d="M1 2.5 h6 M1 4 h4 M1 5.5 h5" stroke="#f27272" stroke-width="1" stroke-linecap="round"/></svg>
+          </div>
+          Top mentions per category
+        </div>
+        <div class="feat" style="grid-column:span 2">
+          <div class="feat-icon fi-blue">
+            <svg viewBox="0 0 8 8" fill="none"><polygon points="4,1 7,7 1,7" stroke="#4f8ef7" stroke-width="1" stroke-linejoin="round"/></svg>
+          </div>
+          Competitive benchmark score + strategic recommendations
+        </div>
+      </div>
+ 
+      <div class="testi">
+        <p class="testi-q">"We identified a service gap our top competitor had that we weren't capitalising on — within a week of running this. It's like having a research analyst on demand."</p>
+        <div class="testi-who">
+          <div class="testi-av">SR</div>
           <div>
-            <div class="author-name">Sarah R.</div>
-            <div class="author-role">Head of Strategy, F&amp;B Group · Singapore</div>
+            <div class="testi-name">Sarah R. &nbsp;·&nbsp; <span class="testi-role">Head of Strategy, F&amp;B Group · Singapore</span></div>
           </div>
         </div>
       </div>
@@ -564,140 +614,134 @@
  
     <div class="stats">
       <div class="stat">
-        <div class="stat-value">30+</div>
-        <div class="stat-label">Reviews per biz</div>
+        <div class="stat-n">30+</div>
+        <div class="stat-l">Reviews per biz</div>
       </div>
       <div class="stat">
-        <div class="stat-value">5</div>
-        <div class="stat-label">Dimensions</div>
+        <div class="stat-n">5</div>
+        <div class="stat-l">Dimensions</div>
       </div>
       <div class="stat">
-        <div class="stat-value">&lt;60s</div>
-        <div class="stat-label">To insights</div>
+        <div class="stat-n">&lt;60s</div>
+        <div class="stat-l">To insights</div>
       </div>
     </div>
   </div>
  
-  <div class="hero-right">
-    <p class="panel-title">Get started</p>
-    <p class="panel-sub">Paste your key and Google Maps URLs to run your first analysis.</p>
+  <!-- RIGHT -->
+  <div class="hr">
+    <p class="panel-h">Get started</p>
+    <p class="panel-s">Paste your key and Google Maps URLs to run your first analysis.</p>
  
-    <label class="field-label">SerpAPI Key</label>
+    <label class="lbl">SerpAPI key</label>
     <input type="text" placeholder="Paste your SerpAPI key here…">
-    <p class="field-hint">serpapi.com — 100 free searches included</p>
+    <p class="hint">serpapi.com — 100 free searches included</p>
  
-    <div class="biz-section-header">
-      <label class="field-label" style="margin:0">Businesses to compare <span style="text-transform:none;letter-spacing:0;font-weight:300;color:var(--text-muted)">(up to 5)</span></label>
-      <button class="add-btn">+ Add</button>
+    <div class="row-hd">
+      <label class="lbl" style="margin:0">Businesses to compare <span style="text-transform:none;letter-spacing:0;font-weight:300;opacity:0.6">(up to 5)</span></label>
+      <button class="add">+ Add</button>
     </div>
-    <p class="field-hint" style="margin-top:4px;margin-bottom:10px">The first entry is your primary business — the rest are competitors.</p>
+    <p class="hint" style="margin-top:5px;margin-bottom:9px">First entry is your primary business — the rest are competitors.</p>
  
-    <div class="biz-row">
-      <div class="biz-indicator">
-        <span class="biz-dot" style="background:#3b82f6"></span>
-        <input type="text" placeholder="Primary business" style="height:36px">
+    <div class="brow">
+      <div class="brow-l">
+        <span class="bdot" style="background:#4f8ef7"></span>
+        <input placeholder="Primary business" style="height:35px">
       </div>
-      <input type="text" placeholder="Paste Google Maps URL…" style="height:36px">
+      <input placeholder="Paste Google Maps URL…" style="height:35px">
     </div>
  
-    <div class="biz-row">
-      <div class="biz-indicator">
-        <span class="biz-dot" style="background:#34d399"></span>
-        <input type="text" placeholder="Competitor name" style="height:36px">
+    <div class="brow">
+      <div class="brow-l">
+        <span class="bdot" style="background:#2dd4a0"></span>
+        <input placeholder="Competitor name" style="height:35px">
       </div>
-      <input type="text" placeholder="Paste Google Maps URL…" style="height:36px">
+      <input placeholder="Paste Google Maps URL…" style="height:35px">
     </div>
  
-    <button class="run-btn">Run analysis →</button>
+    <button class="run">Run analysis →</button>
   </div>
+ 
 </section>
  
 <section class="bottom">
+ 
   <div class="how">
-    <p class="section-eyebrow">How it works</p>
-    <p class="section-title">Three steps to insights</p>
-    <p class="section-sub">From Google Maps to competitive intelligence in under a minute.</p>
+    <p class="sec-eye">How it works</p>
+    <p class="sec-h">Three steps to insights</p>
+    <p class="sec-s">From Google Maps to competitive intelligence in under a minute.</p>
     <div class="steps">
       <div class="step">
-        <div class="step-num">1</div>
+        <div class="sn">1</div>
         <div>
-          <p class="step-heading">Create a SerpAPI account</p>
-          <p class="step-desc">Sign up at serpapi.com — the free tier includes 100 searches. Copy your API key from the dashboard and paste it above.</p>
+          <p class="sh">Create a SerpAPI account</p>
+          <p class="sd">Sign up at serpapi.com — the free tier includes 100 searches. Copy your API key from the dashboard and paste it above.</p>
         </div>
       </div>
       <div class="step">
-        <div class="step-num">2</div>
+        <div class="sn">2</div>
         <div>
-          <p class="step-heading">Find businesses on Google Maps</p>
-          <p class="step-desc">Search for any business, click its listing to open the place page, then copy the full URL from your address bar.</p>
+          <p class="sh">Find businesses on Google Maps</p>
+          <p class="sd">Search for any business, open its listing, and copy the full URL from your browser address bar.</p>
         </div>
       </div>
       <div class="step">
-        <div class="step-num">3</div>
+        <div class="sn">3</div>
         <div>
-          <p class="step-heading">Paste URLs and run</p>
-          <p class="step-desc">Add up to 5 Google Maps URLs. The first is your primary business — the others are competitors. Hit Run to get your dashboard.</p>
+          <p class="sh">Paste URLs and run</p>
+          <p class="sd">Add up to 5 Google Maps URLs — first is your business, rest are competitors. Hit Run to see your dashboard.</p>
         </div>
       </div>
     </div>
   </div>
  
-  <div class="sample">
-    <p class="section-eyebrow">Sample output</p>
-    <p class="section-title">Singapore cafes benchmark</p>
-    <p class="section-sub" style="margin-bottom:14px">Live data from Google Maps reviews.</p>
+  <div class="out">
+    <p class="sec-eye">Sample output</p>
+    <p class="sec-h">Singapore cafes benchmark</p>
+    <p class="sec-s" style="margin-bottom:13px">Live data from Google Maps reviews.</p>
  
-    <div class="biz-cards">
-      <div class="biz-card primary">
-        <div class="biz-card-header">
-          <div class="biz-avatar s">S</div>
-          <div class="biz-name">September Coffee</div>
-        </div>
-        <div class="biz-rating"><span class="rating-val">4.2</span><span class="rating-denom">/5</span></div>
-        <p class="review-count">628 reviews</p>
-        <div class="sentiment-bar"><div class="sentiment-fill" style="width:72%;background:#3b82f6"></div></div>
-        <div class="sentiment-labels"><span>72%</span><span class="neg">18%</span></div>
+    <div class="bcards">
+      <div class="bc p">
+        <div class="bc-hd"><div class="bav s">S</div><div class="bn">September Coffee</div></div>
+        <div class="br"><span class="rv">4.2</span><span class="rd">/5</span></div>
+        <p class="rc">628 reviews</p>
+        <div class="sbar"><div class="sfill" style="width:72%;background:#4f8ef7"></div></div>
+        <div class="slabs"><span>72%</span><span class="neg">18%</span></div>
       </div>
-      <div class="biz-card second">
-        <div class="biz-card-header">
-          <div class="biz-avatar g">G</div>
-          <div class="biz-name">Cafe Gyoen</div>
-        </div>
-        <div class="biz-rating"><span class="rating-val">4.6</span><span class="rating-denom">/5</span></div>
-        <p class="review-count">450 reviews</p>
-        <div class="sentiment-bar"><div class="sentiment-fill" style="width:88%;background:#10b981"></div></div>
-        <div class="sentiment-labels"><span>88%</span><span class="neg">6%</span></div>
+      <div class="bc g">
+        <div class="bc-hd"><div class="bav g">G</div><div class="bn">Cafe Gyoen</div></div>
+        <div class="br"><span class="rv">4.6</span><span class="rd">/5</span></div>
+        <p class="rc">450 reviews</p>
+        <div class="sbar"><div class="sfill" style="width:88%;background:#2dd4a0"></div></div>
+        <div class="slabs"><span>88%</span><span class="neg">6%</span></div>
       </div>
-      <div class="biz-card third">
-        <div class="biz-card-header">
-          <div class="biz-avatar k">K</div>
-          <div class="biz-name">Korio</div>
-        </div>
-        <div class="biz-rating"><span class="rating-val">4.1</span><span class="rating-denom">/5</span></div>
-        <p class="review-count">312 reviews</p>
-        <div class="sentiment-bar"><div class="sentiment-fill" style="width:65%;background:#f59e0b"></div></div>
-        <div class="sentiment-labels"><span>65%</span><span class="neg">22%</span></div>
+      <div class="bc k">
+        <div class="bc-hd"><div class="bav k">K</div><div class="bn">Korio</div></div>
+        <div class="br"><span class="rv">4.1</span><span class="rd">/5</span></div>
+        <p class="rc">312 reviews</p>
+        <div class="sbar"><div class="sfill" style="width:65%;background:#f9bc4a"></div></div>
+        <div class="slabs"><span>65%</span><span class="neg">22%</span></div>
       </div>
     </div>
  
-    <div class="winner-card">
-      <div class="score-badge">
-        <div class="score-num">92</div>
-        <div class="score-label">Score</div>
+    <div class="wcard">
+      <div class="wscore">
+        <div class="wsn">92</div>
+        <div class="wsl">Score</div>
       </div>
       <div>
-        <div class="winner-badge">🏆 Top performer</div>
-        <div class="winner-name">Cafe Gyoen</div>
-        <div class="winner-desc">Highest rating (4.6/5), strongest sentiment (88%), no recurring negative themes.</div>
+        <div class="wb">🏆 Top performer</div>
+        <div class="wn">Cafe Gyoen</div>
+        <div class="wd">Highest rating (4.6/5), strongest sentiment (88%), no recurring negative themes.</div>
       </div>
-      <div class="winner-tags">
+      <div class="wtags">
         <span class="tag pos">+ Exceptional matcha</span>
         <span class="tag pos">+ Consistent service</span>
         <span class="tag neg">− Limited menu variety</span>
       </div>
     </div>
   </div>
-</section>
  
+</section>
 </body>
 </html>
