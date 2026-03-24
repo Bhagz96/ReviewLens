@@ -66,16 +66,14 @@
       .card { border: 1px solid #e2e8f0 !important; border-radius: 8px !important; break-inside: avoid; margin-bottom: 14pt; }
       #print-header { display: block !important; margin-bottom: 20pt; }
       #tab-overview, #tab-timeline, #tab-themes, #tab-highlights, #tab-benchmark { display: block !important; }
-      .print-section-break { break-before: page; padding-top: 0; }
+      .print-section-break { break-before: page; }
       h2.print-h2 { font-size: 15pt; font-weight: 700; color: #0d1f3c; margin: 18pt 0 10pt; border-bottom: 2px solid #0d1f3c; padding-bottom: 5pt; break-after: avoid; }
-      h3.print-h3 { font-size: 12pt; font-weight: 600; color: #0d1f3c; margin: 12pt 0 6pt; break-after: avoid; }
-      .print-chart-img { width: 100%; max-height: 220pt; object-fit: contain; display: block; }
       canvas { display: none !important; }
-      .chart-print-container { break-inside: avoid; }
+      .print-chart-img { width: 100%; max-height: 220pt; object-fit: contain; display: block; }
     }
- 
     @media(max-width:768px){ .split-hero{flex-direction:column!important;} .hero-right{border-left:none!important;border-top:1px solid rgba(255,255,255,0.06)!important;} .below-fold{flex-direction:column!important;} }
   </style>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
 </head>
 <body>
  
@@ -291,33 +289,34 @@
     <button class="tab-btn" onclick="switchTab('themes')">Themes</button>
     <button class="tab-btn" onclick="switchTab('highlights')">Highlights</button>
     <button class="tab-btn" onclick="switchTab('benchmark')">Benchmark</button>
-    <div style="display:flex;gap:6px;margin-left:auto;flex-shrink:0;">
+    <div style="display:flex;gap:6px;margin-left:auto;flex-shrink:0;align-items:center;">
       <button onclick="exportPDF()" style="font-size:12px;padding:5px 12px;background:transparent;border:1px solid var(--border);border-radius:7px;color:var(--muted);display:flex;align-items:center;gap:5px;">
-        <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/><polyline points="10 9 9 9 8 9"/></svg>
-        Export PDF
+        <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>
+        PDF
       </button>
       <button onclick="exportWord()" style="font-size:12px;padding:5px 12px;background:transparent;border:1px solid var(--border);border-radius:7px;color:var(--muted);display:flex;align-items:center;gap:5px;">
-        <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/><polyline points="10 9 9 9 8 9"/></svg>
-        Export Word
+        <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>
+        Word
       </button>
-      <button onclick="reset()" style="font-size:12px;padding:5px 12px;background:transparent;border:1px solid var(--border);border-radius:7px;color:var(--muted);">← New search</button>
+      <button onclick="exportExcel()" style="font-size:12px;padding:5px 12px;background:transparent;border:1px solid var(--border);border-radius:7px;color:var(--muted);display:flex;align-items:center;gap:5px;">
+        <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="18" height="18" rx="2"/><path d="M3 9h18M9 21V9"/></svg>
+        Excel
+      </button>
+      <button onclick="reset()" style="font-size:12px;padding:5px 12px;background:transparent;border:1px solid var(--border);border-radius:7px;color:var(--muted);">← New</button>
     </div>
   </div>
   <div style="max-width:1040px;margin:0 auto;padding:2rem 1.5rem;">
- 
-  <!-- Print header - hidden normally -->
   <div id="print-header" style="display:none;margin-bottom:2rem;">
     <div style="font-size:8pt;color:#94a3b8;text-transform:uppercase;letter-spacing:1.5px;margin-bottom:6pt;">ReviewLens — Competitive Intelligence Report</div>
     <div id="print-title" style="font-size:22pt;font-weight:700;color:#0d1f3c;line-height:1.15;margin-bottom:5pt;"></div>
     <div style="font-size:9pt;color:#64748b;">Generated on <span id="print-date"></span></div>
     <div style="margin-top:10pt;border-top:2.5px solid #0d1f3c;"></div>
   </div>
-  <!-- Print section headers injected by exportPDF -->
-  <div id="print-section-overview" style="display:none;" class="print-section-break"><h2 class="print-h2">Overview</h2></div>
-  <div id="print-section-timeline" style="display:none;" class="print-section-break"><h2 class="print-h2">Ratings Over Time</h2></div>
-  <div id="print-section-themes" style="display:none;" class="print-section-break"><h2 class="print-h2">Sentiment Themes</h2></div>
-  <div id="print-section-highlights" style="display:none;" class="print-section-break"><h2 class="print-h2">Product &amp; Service Highlights</h2></div>
-  <div id="print-section-benchmark" style="display:none;" class="print-section-break"><h2 class="print-h2">Competitive Benchmark</h2></div>
+  <div id="pso" style="display:none;" class="print-section-break"><h2 class="print-h2">Overview</h2></div>
+  <div id="pst" style="display:none;" class="print-section-break"><h2 class="print-h2">Ratings Over Time</h2></div>
+  <div id="psth" style="display:none;" class="print-section-break"><h2 class="print-h2">Sentiment Themes</h2></div>
+  <div id="psh" style="display:none;" class="print-section-break"><h2 class="print-h2">Product &amp; Service Highlights</h2></div>
+  <div id="psb" style="display:none;" class="print-section-break"><h2 class="print-h2">Competitive Benchmark</h2></div>
     <div id="tab-overview"></div>
     <div id="tab-timeline" class="hidden"></div>
     <div id="tab-themes" class="hidden"></div>
@@ -361,7 +360,7 @@ async function runAnalysis(){
   if(!apiKey){errEl.textContent="Please enter your SerpAPI key.";show("setup-error");return;}
   if(!valid.length){errEl.textContent="Please enter at least one Google Maps URL.";show("setup-error");return;}
   hide("setup-error");showScreen("loading");
-  var collected=[];collectedMeta=[];
+  var collected=[];collectedMeta=[];window._rawReviews=[];
  
   for(var i=0;i<valid.length;i++){
     var biz=valid[i];
@@ -389,12 +388,13 @@ async function runAnalysis(){
       addLog("Total: "+allReviews.length+" reviews for: "+name,"success");
       collectedMeta.push({name:name,thumbnail:(place_info&&place_info.thumbnail)||null,address:(place_info&&place_info.address)||null,gps:(place_info&&place_info.gps_coordinates)||null});
       collected.push({name:name,place_info:place_info,reviews:allReviews});
+      window._rawReviews.push({name:name,reviews:allReviews});
     }catch(e){addLog("Error for "+label+": "+e.message,"error");collected.push({name:label,reviews:[],error:e.message});collectedMeta.push({name:label});}
   }
  
   addLog("Running AI analysis...");
   try{
-    var prompt="You are a business analyst. Analyze these Google Maps review datasets. Today is March 2026. Return ONLY valid JSON, no markdown, no backticks.\n\n"+JSON.stringify(collected.map(function(b){return{name:b.name,place_info:b.place_info,reviews:(b.reviews||[]).slice(0,40)};}))+"\n\nReturn exactly:\n{\"businesses\":[{\"name\":\"string\",\"overall_rating\":4.2,\"total_reviews\":628,\"price_range\":\"SGD 20-40\",\"description\":\"2-3 sentence description of what this business is, what they specialise in, and what makes them notable\",\"established\":\"year if mentioned otherwise null\",\"category\":\"type of business\",\"positive_pct\":78,\"negative_pct\":14,\"ratings_by_year\":[{\"year\":\"2025\",\"avg_rating\":4.1,\"count\":12}],\"positive_themes\":[\"theme1\",\"theme2\",\"theme3\"],\"negative_themes\":[\"theme1\",\"theme2\"],\"best_mentions\":[\"item1\",\"item2\",\"item3\"],\"worst_mentions\":[\"item1\"],\"one_line_summary\":\"string\"}],\"benchmark\":{\"winner\":\"name\",\"winner_reason\":\"string\",\"rankings\":[{\"name\":\"string\",\"rank\":1,\"score\":87,\"strengths\":\"string\",\"weaknesses\":\"string\"}],\"common_positives\":[\"theme\"],\"common_negatives\":[\"theme\"],\"key_differentiator\":\"string\"}}\n\nRules: relative dates (3 weeks ago=2026,6 months ago=2025,a year ago=2025,2 years ago=2024,3 years ago=2023). best_mentions: extract ONLY specific products, dishes, menu items, or service features mentioned positively in 4-5 star reviews (e.g. braised hor fun, truffle fries, online booking system). NEVER include generic comments like good service, friendly staff, nice ambience. worst_mentions: extract ONLY specific products, dishes, menu items, or service features criticised in 1-2 star reviews (e.g. portion size, queue system, specific dish name). NEVER include generic complaints like rude staff, slow service, bad management. If no specific product or feature mentions exist, return empty array. ratings_by_year all years found. score 0-100.";
+    var prompt="You are a business analyst. Analyze these Google Maps review datasets. Today is March 2026. Return ONLY valid JSON, no markdown, no backticks.\n\n"+JSON.stringify(collected.map(function(b){return{name:b.name,place_info:b.place_info,reviews:(b.reviews||[]).slice(0,40)};}))+"\n\nReturn exactly:\n{\"businesses\":[{\"name\":\"string\",\"overall_rating\":4.2,\"total_reviews\":628,\"price_range\":\"SGD 20-40\",\"description\":\"2-3 sentence description of what this business is, what they specialise in, and what makes them notable\",\"established\":\"year if mentioned otherwise null\",\"category\":\"type of business\",\"positive_pct\":78,\"negative_pct\":14,\"ratings_by_year\":[{\"year\":\"2025\",\"avg_rating\":4.1,\"count\":12}],\"positive_themes\":[\"theme1\",\"theme2\",\"theme3\"],\"negative_themes\":[\"theme1\",\"theme2\"],\"best_mentions\":[\"item1\",\"item2\",\"item3\"],\"worst_mentions\":[\"item1\"],\"one_line_summary\":\"string\"}],\"benchmark\":{\"winner\":\"name\",\"winner_reason\":\"string\",\"rankings\":[{\"name\":\"string\",\"rank\":1,\"score\":87,\"strengths\":\"string\",\"weaknesses\":\"string\"}],\"common_positives\":[\"theme\"],\"common_negatives\":[\"theme\"],\"key_differentiator\":\"string\"}}\n\nRules: relative dates (3 weeks ago=2026,6 months ago=2025,a year ago=2025,2 years ago=2024,3 years ago=2023). best_mentions: extract ONLY specific products, dishes, menu items, or service features mentioned positively in 4-5 star reviews. NEVER include generic comments like good service or friendly staff. worst_mentions: extract ONLY specific products, dishes, or service features criticised in 1-2 star reviews. NEVER include generic complaints like rude staff or slow service. If no specific product or feature mentions exist, return empty array. ratings_by_year all years found. score 0-100.";
     var claudeRes=await fetch("/api/claude",{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({model:"claude-sonnet-4-20250514",max_tokens:4000,messages:[{role:"user",content:prompt}]})});
     var claudeData=await claudeRes.json();
     if(claudeData.error) throw new Error(claudeData.error.message||JSON.stringify(claudeData.error));
@@ -404,184 +404,6 @@ async function runAnalysis(){
   }catch(e){addLog("AI analysis failed: "+e.message,"error");document.getElementById("loading-error-msg").textContent="Failed: "+e.message;show("loading-error");}
 }
  
- 
-function exportPDF(){
-  var bizs=results&&results.businesses||[];
-  // Set header
-  document.getElementById('print-title').textContent=bizs.map(function(b){return b.name;}).join(' vs ');
-  document.getElementById('print-date').textContent=new Date().toLocaleDateString('en-SG',{day:'numeric',month:'long',year:'numeric'});
- 
-  // Show all tabs
-  ["overview","timeline","themes","highlights","benchmark"].forEach(function(t){
-    document.getElementById("tab-"+t).classList.remove("hidden");
-  });
- 
-  // Show section headers in correct positions
-  ["overview","timeline","themes","highlights","benchmark"].forEach(function(t){
-    var sec=document.getElementById("print-section-"+t);
-    if(sec){ sec.style.display="block"; }
-  });
- 
-  // Move section headers before their tabs
-  ["overview","timeline","themes","highlights","benchmark"].forEach(function(t){
-    var sec=document.getElementById("print-section-"+t);
-    var tab=document.getElementById("tab-"+t);
-    if(sec&&tab&&tab.parentNode){ tab.parentNode.insertBefore(sec,tab); }
-  });
- 
-  // First section: no page break
-  var firstSec=document.getElementById("print-section-overview");
-  if(firstSec) firstSec.classList.remove("print-section-break");
- 
-  // Convert charts to images for print
-  setTimeout(function(){
-    var barCanvas=document.getElementById("bar-chart");
-    var barImg=document.getElementById("bar-chart-img");
-    if(barCanvas&&barImg){
-      try{ barImg.src=barCanvas.toDataURL("image/png"); barImg.style.display="block"; }catch(e){}
-    }
-    var lineCanvas=document.getElementById("line-chart");
-    var lineImg=document.getElementById("line-chart-img");
-    if(lineCanvas&&lineImg){
-      try{ lineImg.src=lineCanvas.toDataURL("image/png"); lineImg.style.display="block"; }catch(e){}
-    }
- 
-    setTimeout(function(){
-      window.print();
-      // Restore after print
-      setTimeout(function(){
-        ["overview","timeline","themes","highlights","benchmark"].forEach(function(t){
-          if(t!==currentTab) document.getElementById("tab-"+t).classList.add("hidden");
-          var sec=document.getElementById("print-section-"+t);
-          if(sec){ sec.style.display="none"; }
-        });
-        if(barImg) barImg.style.display="none";
-        if(lineImg) lineImg.style.display="none";
-        var firstSec2=document.getElementById("print-section-overview");
-        if(firstSec2) firstSec2.classList.add("print-section-break");
-      },1000);
-    },300);
-  },200);
-}
- 
-function exportWord(){
-  var bizs=results&&results.businesses||[];
-  var bench=results&&results.benchmark;
-  var title=bizs.map(function(b){return b.name;}).join(' vs ');
-  var date=new Date().toLocaleDateString('en-SG',{day:'numeric',month:'long',year:'numeric'});
-  var PALETTE=["#4a9eff","#2ec4a9","#f5a623","#e8614d","#9b59b6"];
- 
-  function esc2(s){return(s||"").replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;");}
- 
-  var html='<html xmlns:o="urn:schemas-microsoft-com:office:office" xmlns:w="urn:schemas-microsoft-com:office:word"><head><meta charset="utf-8"><style>';
-  html+='body{font-family:Calibri,sans-serif;font-size:11pt;color:#1a2744;margin:2cm;}';
-  html+='h1{font-size:20pt;color:#0d1f3c;margin-bottom:4pt;}';
-  html+='h2{font-size:14pt;color:#0d1f3c;border-bottom:2px solid #0d1f3c;padding-bottom:4pt;margin-top:24pt;margin-bottom:12pt;}';
-  html+='h3{font-size:12pt;color:#0d1f3c;margin-top:16pt;margin-bottom:6pt;}';
-  html+='table{width:100%;border-collapse:collapse;margin-bottom:16pt;}';
-  html+='td,th{padding:8pt 10pt;border:1px solid #e2e8f0;font-size:10pt;vertical-align:top;}';
-  html+='th{background:#f4f6f9;font-weight:700;color:#0d1f3c;}';
-  html+='.pos{color:#0d7a5f;font-weight:600;}.neg{color:#c0392b;font-weight:600;}';
-  html+='.muted{color:#64748b;}.small{color:#94a3b8;font-size:9pt;}';
-  html+='.section-break{page-break-before:always;}';
-  html+='</style></head><body>';
- 
-  // Cover
-  html+='<div style="margin-bottom:24pt;">';
-  html+='<div style="font-size:9pt;color:#94a3b8;text-transform:uppercase;letter-spacing:1px;margin-bottom:6pt;">ReviewLens — Competitive Intelligence Report</div>';
-  html+='<h1>'+esc2(title)+'</h1>';
-  html+='<div class="muted">Generated on '+date+'</div>';
-  html+='<hr style="border:none;border-top:2px solid #0d1f3c;margin:12pt 0;"/>';
-  html+='</div>';
- 
-  // 1. OVERVIEW
-  html+='<h2>1. Overview</h2>';
-  html+='<table><tr><th>Business</th><th>Rating</th><th>Reviews</th><th>Positive</th><th>Negative</th><th>Price Range</th><th>Summary</th></tr>';
-  bizs.forEach(function(biz){
-    html+='<tr><td><strong>'+esc2(biz.name)+'</strong><br/><span class="small">'+esc2(biz.category||"")+'</span></td>';
-    html+='<td><strong>'+((biz.overall_rating||0).toFixed(1))+'</strong>/5</td>';
-    html+='<td>'+((biz.total_reviews||0).toLocaleString())+'</td>';
-    html+='<td class="pos">'+(biz.positive_pct||0)+'%</td>';
-    html+='<td class="neg">'+(biz.negative_pct||0)+'%</td>';
-    html+='<td>'+esc2(biz.price_range||"—")+'</td>';
-    html+='<td class="muted">'+esc2(biz.one_line_summary||"")+'</td></tr>';
-  });
-  html+='</table>';
- 
-  bizs.forEach(function(biz,i){
-    if(biz.description){
-      html+='<h3>'+esc2(biz.name)+'</h3>';
-      html+='<p style="font-size:10pt;color:#64748b;line-height:1.6;">'+esc2(biz.description)+'</p>';
-    }
-  });
- 
-  // 2. TIMELINE
-  html+='<h2 class="section-break">2. Ratings Over Time</h2>';
-  bizs.forEach(function(biz,i){
-    if(biz.ratings_by_year&&biz.ratings_by_year.length){
-      html+='<h3>'+esc2(biz.name)+'</h3>';
-      html+='<table><tr><th>Year</th><th>Avg Rating</th><th>Review Count</th></tr>';
-      biz.ratings_by_year.forEach(function(yr){
-        html+='<tr><td>'+esc2(yr.year)+'</td><td><strong>'+yr.avg_rating.toFixed(1)+'</strong>/5</td><td>'+yr.count+'</td></tr>';
-      });
-      html+='</table>';
-    }
-  });
- 
-  // 3. THEMES
-  html+='<h2 class="section-break">3. Sentiment Themes</h2>';
-  html+='<table><tr><th>Business</th><th>Positive %</th><th>Negative %</th><th>What People Love</th><th>Pain Points</th></tr>';
-  bizs.forEach(function(biz){
-    html+='<tr><td><strong>'+esc2(biz.name)+'</strong></td>';
-    html+='<td class="pos">'+(biz.positive_pct||0)+'%</td>';
-    html+='<td class="neg">'+(biz.negative_pct||0)+'%</td>';
-    html+='<td>'+(biz.positive_themes||[]).map(function(t){return'• '+esc2(t);}).join('<br/>')+'</td>';
-    html+='<td>'+(biz.negative_themes||[]).map(function(t){return'• '+esc2(t);}).join('<br/>')+'</td></tr>';
-  });
-  html+='</table>';
- 
-  // 4. HIGHLIGHTS
-  html+='<h2 class="section-break">4. Product & Service Highlights</h2>';
-  html+='<table><tr><th>Business</th><th>Top Mentions (4-5★)</th><th>Flagged (1-2★)</th></tr>';
-  bizs.forEach(function(biz){
-    var best=(biz.best_mentions||biz.best_dishes||[]);
-    var worst=(biz.worst_mentions||biz.worst_dishes||[]);
-    html+='<tr><td><strong>'+esc2(biz.name)+'</strong></td>';
-    html+='<td class="pos">'+(best.length?best.map(function(d){return'▲ '+esc2(d);}).join('<br/>'):'—')+'</td>';
-    html+='<td class="neg">'+(worst.length?worst.map(function(d){return'▼ '+esc2(d);}).join('<br/>'):'—')+'</td></tr>';
-  });
-  html+='</table>';
- 
-  // 5. BENCHMARK
-  html+='<h2 class="section-break">5. Competitive Benchmark</h2>';
-  if(bench){
-    html+='<div style="background:#f0f7ff;border:1px solid #d0e4ff;border-radius:6px;padding:12pt;margin-bottom:16pt;">';
-    html+='<strong>Top Performer: '+esc2(bench.winner)+'</strong><br/>';
-    html+='<span class="muted">'+esc2(bench.winner_reason)+'</span>';
-    if(bench.key_differentiator) html+='<br/><span class="small">Key differentiator: '+esc2(bench.key_differentiator)+'</span>';
-    html+='</div>';
-    html+='<table><tr><th>Rank</th><th>Business</th><th>Score</th><th>Strengths</th><th>Weaknesses</th></tr>';
-    (bench.rankings||[]).sort(function(a,b){return a.rank-b.rank;}).forEach(function(r,i){
-      html+='<tr><td><strong>#'+r.rank+'</strong></td><td>'+esc2(r.name)+'</td><td><strong style="color:'+PALETTE[i%PALETTE.length]+';">'+r.score+'</strong></td>';
-      html+='<td class="pos">'+esc2(r.strengths)+'</td><td class="neg">'+esc2(r.weaknesses)+'</td></tr>';
-    });
-    html+='</table>';
-  }
- 
-  html+='</body></html>';
- 
-  var blob=new Blob([html],{type:'application/msword'});
-  var url=URL.createObjectURL(blob);
-  var a=document.createElement('a');
-  a.href=url;
-  a.download='ReviewLens_'+title.replace(/[^a-z0-9]/gi,'_').substring(0,40)+'.doc';
-  document.body.appendChild(a);
-  a.click();
-  document.body.removeChild(a);
-  URL.revokeObjectURL(url);
-}
- 
-var currentTab="overview";
 function renderResults(){charts.forEach(function(c){c.destroy();});charts=[];renderOverview();renderTimeline();renderThemes();renderHighlights();renderBenchmark();}
  
 function renderOverview(){
@@ -597,7 +419,7 @@ function renderOverview(){
     var posPct=biz.positive_pct||0;var negPct=biz.negative_pct||0;
     html+='<div class="card" style="border-top:3px solid '+PALETTE[i]+';"><div style="display:flex;align-items:center;gap:12px;margin-bottom:12px;">'+avatarHtml+'<div style="flex:1;min-width:0;"><div style="font-size:14px;font-weight:700;color:'+PALETTE[i]+';margin-bottom:2px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">'+esc(biz.name)+'</div>'+(biz.category?'<div style="font-size:11px;color:var(--small);">'+esc(biz.category)+'</div>':'')+(biz.established&&biz.established!="null"?'<div style="font-size:11px;color:var(--small);">Est. '+esc(String(biz.established))+'</div>':'')+'</div></div>'+(meta.address?'<div style="font-size:11px;color:var(--small);margin-bottom:12px;line-height:1.5;">'+esc(meta.address)+'</div>':'')+'<div style="display:flex;align-items:baseline;gap:4px;margin-bottom:2px;"><span style="font-size:28px;font-weight:700;color:var(--navy);">'+((biz.overall_rating||0).toFixed(1))+'</span><span style="font-size:13px;color:var(--small);">/5</span></div><div style="font-size:11px;color:var(--muted);margin-bottom:12px;">'+((biz.total_reviews||0).toLocaleString())+' reviews</div><div style="margin-bottom:12px;"><div style="display:flex;justify-content:space-between;margin-bottom:4px;"><span style="font-size:11px;color:#0d7a5f;font-weight:600;">'+posPct+'% positive</span><span style="font-size:11px;color:#c0392b;font-weight:600;">'+negPct+'% negative</span></div><div style="height:6px;background:#fef0ee;border-radius:3px;overflow:hidden;"><div style="width:'+posPct+'%;height:100%;background:#2ec4a9;border-radius:3px;"></div></div></div>'+(biz.description?'<p style="font-size:12px;color:var(--muted);line-height:1.65;margin-bottom:12px;">'+esc(biz.description)+'</p>':'')+'<div style="display:flex;gap:4px;flex-wrap:wrap;">'+(biz.price_range?'<span class="pill-gray">'+esc(biz.price_range)+'</span>':'')+(bench&&bench.winner===biz.name?'<span class="pill-gold">&#127942; Top rated</span>':'')+distHtml+'</div></div>';
   });
-  html+='</div><div class="card"><label class="lbl-light">Rating comparison</label><div class="chart-print-container" style="position:relative;width:100%;height:240px;"><canvas id="bar-chart"></canvas><img id="bar-chart-img" class="print-chart-img" style="display:none;"/></div></div>';
+  html+='</div><div class="card"><label class="lbl-light">Rating comparison</label><div style="position:relative;width:100%;height:240px;"><canvas id="bar-chart"></canvas><img id="bar-chart-img" class="print-chart-img" style="display:none;"/></div></div>';
   document.getElementById("tab-overview").innerHTML=html;
   setTimeout(function(){var ctx=document.getElementById("bar-chart");if(!ctx)return;charts.push(new Chart(ctx,{type:"bar",data:{labels:bizs.map(function(b){return b.name;}),datasets:[{data:bizs.map(function(b){return b.overall_rating||0;}),backgroundColor:PALETTE.slice(0,bizs.length),borderRadius:6}]},options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false}},scales:{y:{min:0,max:5,grid:{color:"#f1f5f9"}}}}}));},50);
 }
@@ -612,7 +434,7 @@ function updateTimeline(){var bizs=results.businesses||[];var allYears=[...new S
 function renderTimelineContent(filter,bizs,allYears){
   var el=document.getElementById("timeline-content");if(!el)return;
   if(filter==="all"){
-    el.innerHTML='<div class="card"><div class="chart-print-container" style="position:relative;width:100%;height:320px;"><canvas id="line-chart"></canvas><img id="line-chart-img" class="print-chart-img" style="display:none;"/></div></div>';
+    el.innerHTML='<div class="card"><div style="position:relative;width:100%;height:320px;"><canvas id="line-chart"></canvas><img id="line-chart-img" class="print-chart-img" style="display:none;"/></div></div>';
     setTimeout(function(){var ctx=document.getElementById("line-chart");if(!ctx)return;charts.push(new Chart(ctx,{type:"line",data:{labels:allYears,datasets:bizs.map(function(b,i){return{label:b.name,data:allYears.map(function(y){var yr=(b.ratings_by_year||[]).find(function(r){return r.year===y;});return yr?parseFloat(yr.avg_rating.toFixed(2)):null;}),borderColor:PALETTE[i],backgroundColor:PALETTE[i]+"18",tension:0.4,spanGaps:true,pointRadius:6,fill:true};})},options:{responsive:true,maintainAspectRatio:false,scales:{y:{min:1,max:5,grid:{color:"#f1f5f9"}}}}}));},50);
   }else{
     el.innerHTML='<div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:14px;">'+bizs.map(function(biz,i){var yr=(biz.ratings_by_year||[]).find(function(r){return r.year===filter;});return'<div class="card" style="border-top:3px solid '+PALETTE[i]+';text-align:center;padding:1.5rem;"><div style="font-size:13px;font-weight:600;color:'+PALETTE[i]+';margin-bottom:12px;">'+esc(biz.name)+'</div><div style="font-size:36px;font-weight:700;margin-bottom:6px;color:var(--navy);">'+(yr?yr.avg_rating.toFixed(1):"–")+'</div><div style="font-size:12px;color:var(--muted);">'+(yr?yr.count+" reviews in "+filter:"No data for "+filter)+'</div></div>';}).join("")+'</div>';
@@ -654,7 +476,7 @@ function renderBenchmark(){
   document.getElementById("tab-benchmark").innerHTML=html;
 }
  
-function switchTab(name){currentTab=name;
+function switchTab(name){
   ["overview","timeline","themes","highlights","benchmark"].forEach(function(t,i){
     document.getElementById("tab-"+t).classList[t===name?"remove":"add"]("hidden");
     document.querySelectorAll(".tab-btn")[i].classList[t===name?"add":"remove"]("active");
@@ -672,7 +494,129 @@ function reset(){
   renderBizList();showScreen("setup");
 }
 renderBizList();
+ 
+var currentTab="overview";
+ 
+function exportPDF(){
+  var bizs=results&&results.businesses||[];
+  document.getElementById('print-title').textContent=bizs.map(function(b){return b.name;}).join(' vs ');
+  document.getElementById('print-date').textContent=new Date().toLocaleDateString('en-SG',{day:'numeric',month:'long',year:'numeric'});
+  ["overview","timeline","themes","highlights","benchmark"].forEach(function(t){
+    document.getElementById("tab-"+t).classList.remove("hidden");
+  });
+  var ids=["pso","pst","psth","psh","psb"];
+  var tabs=["tab-overview","tab-timeline","tab-themes","tab-highlights","tab-benchmark"];
+  ids.forEach(function(id,i){
+    var sec=document.getElementById(id);
+    var tab=document.getElementById(tabs[i]);
+    if(sec&&tab&&tab.parentNode){tab.parentNode.insertBefore(sec,tab);sec.style.display="block";}
+  });
+  document.getElementById("pso").classList.remove("print-section-break");
+  setTimeout(function(){
+    var bc=document.getElementById("bar-chart"),bi=document.getElementById("bar-chart-img");
+    if(bc&&bi){try{bi.src=bc.toDataURL("image/png");bi.style.display="block";}catch(e){}}
+    var lc=document.getElementById("line-chart"),li=document.getElementById("line-chart-img");
+    if(lc&&li){try{li.src=lc.toDataURL("image/png");li.style.display="block";}catch(e){}}
+    setTimeout(function(){
+      window.print();
+      setTimeout(function(){
+        ["overview","timeline","themes","highlights","benchmark"].forEach(function(t){
+          if(t!==currentTab)document.getElementById("tab-"+t).classList.add("hidden");
+        });
+        ids.forEach(function(id){var s=document.getElementById(id);if(s)s.style.display="none";});
+        document.getElementById("pso").classList.add("print-section-break");
+        if(bi)bi.style.display="none";if(li)li.style.display="none";
+      },1000);
+    },300);
+  },200);
+}
+ 
+function exportWord(){
+  var bizs=results&&results.businesses||[];
+  var bench=results&&results.benchmark;
+  var title=bizs.map(function(b){return b.name;}).join(' vs ');
+  var date=new Date().toLocaleDateString('en-SG',{day:'numeric',month:'long',year:'numeric'});
+  function e(s){return(s||"").replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;");}
+  var h='<html xmlns:o="urn:schemas-microsoft-com:office:office"><head><meta charset="utf-8"><style>';
+  h+='body{font-family:Calibri,sans-serif;font-size:11pt;color:#1a2744;margin:2cm;}';
+  h+='h1{font-size:20pt;color:#0d1f3c;}h2{font-size:14pt;color:#0d1f3c;border-bottom:2px solid #0d1f3c;padding-bottom:4pt;margin-top:24pt;}';
+  h+='h3{font-size:12pt;color:#0d1f3c;margin-top:16pt;}table{width:100%;border-collapse:collapse;margin-bottom:16pt;}';
+  h+='td,th{padding:8pt 10pt;border:1px solid #e2e8f0;font-size:10pt;vertical-align:top;}th{background:#f4f6f9;font-weight:700;}';
+  h+='.pos{color:#0d7a5f;font-weight:600;}.neg{color:#c0392b;font-weight:600;}.muted{color:#64748b;}</style></head><body>';
+  h+='<div style="font-size:8pt;color:#94a3b8;text-transform:uppercase;letter-spacing:1px;margin-bottom:6pt;">ReviewLens — Competitive Intelligence Report</div>';
+  h+='<h1>'+e(title)+'</h1><div class="muted">Generated on '+date+'</div><hr style="border:none;border-top:2px solid #0d1f3c;margin:12pt 0;"/>';
+  h+='<h2>1. Overview</h2><table><tr><th>Business</th><th>Rating</th><th>Reviews</th><th>Positive</th><th>Negative</th><th>Price</th><th>Summary</th></tr>';
+  bizs.forEach(function(biz){h+='<tr><td><strong>'+e(biz.name)+'</strong><br/><span class="muted">'+e(biz.category||"")+'</span></td><td><strong>'+((biz.overall_rating||0).toFixed(1))+'</strong>/5</td><td>'+((biz.total_reviews||0).toLocaleString())+'</td><td class="pos">'+(biz.positive_pct||0)+'%</td><td class="neg">'+(biz.negative_pct||0)+'%</td><td>'+e(biz.price_range||"—")+'</td><td class="muted">'+e(biz.one_line_summary||"")+'</td></tr>';});
+  h+='</table>';
+  bizs.forEach(function(biz){if(biz.description)h+='<h3>'+e(biz.name)+'</h3><p class="muted">'+e(biz.description)+'</p>';});
+  h+='<h2>2. Ratings Over Time</h2>';
+  bizs.forEach(function(biz){if(biz.ratings_by_year&&biz.ratings_by_year.length){h+='<h3>'+e(biz.name)+'</h3><table><tr><th>Year</th><th>Avg Rating</th><th>Review Count</th></tr>';biz.ratings_by_year.forEach(function(yr){h+='<tr><td>'+e(yr.year)+'</td><td><strong>'+yr.avg_rating.toFixed(1)+'</strong>/5</td><td>'+yr.count+'</td></tr>';});h+='</table>';}});
+  h+='<h2>3. Sentiment Themes</h2><table><tr><th>Business</th><th>Positive %</th><th>Negative %</th><th>What People Love</th><th>Pain Points</th></tr>';
+  bizs.forEach(function(biz){h+='<tr><td><strong>'+e(biz.name)+'</strong></td><td class="pos">'+(biz.positive_pct||0)+'%</td><td class="neg">'+(biz.negative_pct||0)+'%</td><td>'+(biz.positive_themes||[]).map(function(t){return'• '+e(t);}).join('<br/>')+'</td><td>'+(biz.negative_themes||[]).map(function(t){return'• '+e(t);}).join('<br/>')+'</td></tr>';});
+  h+='</table><h2>4. Product & Service Highlights</h2><table><tr><th>Business</th><th>Top Mentions (4-5★)</th><th>Flagged (1-2★)</th></tr>';
+  bizs.forEach(function(biz){var best=(biz.best_mentions||biz.best_dishes||[]),worst=(biz.worst_mentions||biz.worst_dishes||[]);h+='<tr><td><strong>'+e(biz.name)+'</strong></td><td class="pos">'+(best.length?best.map(function(d){return'▲ '+e(d);}).join('<br/>'):'—')+'</td><td class="neg">'+(worst.length?worst.map(function(d){return'▼ '+e(d);}).join('<br/>'):'—')+'</td></tr>';});
+  h+='</table><h2>5. Competitive Benchmark</h2>';
+  if(bench){h+='<div style="background:#f0f7ff;border:1px solid #d0e4ff;border-radius:6px;padding:12pt;margin-bottom:16pt;"><strong>Top Performer: '+e(bench.winner)+'</strong><br/><span class="muted">'+e(bench.winner_reason)+'</span></div>';h+='<table><tr><th>Rank</th><th>Business</th><th>Score</th><th>Strengths</th><th>Weaknesses</th></tr>';(bench.rankings||[]).sort(function(a,b){return a.rank-b.rank;}).forEach(function(r){h+='<tr><td>#'+r.rank+'</td><td>'+e(r.name)+'</td><td><strong>'+r.score+'</strong></td><td class="pos">'+e(r.strengths)+'</td><td class="neg">'+e(r.weaknesses)+'</td></tr>';});h+='</table>';}
+  h+='</body></html>';
+  var blob=new Blob([h],{type:'application/msword'});
+  var url=URL.createObjectURL(blob);
+  var a=document.createElement('a');a.href=url;a.download='ReviewLens_'+title.replace(/[^a-z0-9]/gi,'_').substring(0,40)+'.doc';
+  document.body.appendChild(a);a.click();document.body.removeChild(a);URL.revokeObjectURL(url);
+}
+ 
+function exportExcel(){
+  if(!results||!window._rawReviews) return;
+  var bizs=results.businesses||[];
+  var bench=results.benchmark;
+  var wb=XLSX.utils.book_new();
+  var reviewRows=[["Business","Reviewer","Rating","Date","Review Text","Source"]];
+  (window._rawReviews||[]).forEach(function(biz){
+    (biz.reviews||[]).forEach(function(r){
+      reviewRows.push([biz.name,(r.user&&r.user.name)||"Anonymous",r.rating||"",r.date||r.iso_date||"",r.snippet||(r.extracted_snippet&&r.extracted_snippet.original)||"","Google Maps"]);
+    });
+  });
+  var ws1=XLSX.utils.aoa_to_sheet(reviewRows);
+  ws1["!cols"]=[{wch:25},{wch:20},{wch:8},{wch:15},{wch:80},{wch:14}];
+  XLSX.utils.book_append_sheet(wb,ws1,"All Reviews");
+ 
+  var summaryRows=[["Business","Category","Rating","Total Reviews","Positive %","Negative %","Price Range","Est. Year","Description","Positive Themes","Negative Themes"]];
+  bizs.forEach(function(biz){
+    summaryRows.push([biz.name||"",biz.category||"",biz.overall_rating||"",biz.total_reviews||"",(biz.positive_pct||0)+"%",(biz.negative_pct||0)+"%",biz.price_range||"",biz.established&&biz.established!="null"?biz.established:"",biz.description||"",(biz.positive_themes||[]).join(", "),(biz.negative_themes||[]).join(", ")]);
+  });
+  var ws2=XLSX.utils.aoa_to_sheet(summaryRows);
+  ws2["!cols"]=[{wch:25},{wch:20},{wch:10},{wch:14},{wch:12},{wch:12},{wch:14},{wch:10},{wch:60},{wch:50},{wch:50}];
+  XLSX.utils.book_append_sheet(wb,ws2,"Business Summary");
+ 
+  var timelineRows=[["Business","Year","Average Rating","Review Count"]];
+  bizs.forEach(function(biz){(biz.ratings_by_year||[]).forEach(function(yr){timelineRows.push([biz.name||"",yr.year,yr.avg_rating,yr.count]);});});
+  var ws3=XLSX.utils.aoa_to_sheet(timelineRows);
+  ws3["!cols"]=[{wch:25},{wch:8},{wch:16},{wch:14}];
+  XLSX.utils.book_append_sheet(wb,ws3,"Ratings Over Time");
+ 
+  var hlRows=[["Business","Type","Item","Source"]];
+  bizs.forEach(function(biz){
+    (biz.best_mentions||biz.best_dishes||[]).forEach(function(item){hlRows.push([biz.name||"","Top Mention",item,"4-5 star reviews"]);});
+    (biz.worst_mentions||biz.worst_dishes||[]).forEach(function(item){hlRows.push([biz.name||"","Flagged",item,"1-2 star reviews"]);});
+  });
+  var ws4=XLSX.utils.aoa_to_sheet(hlRows);
+  ws4["!cols"]=[{wch:25},{wch:14},{wch:40},{wch:18}];
+  XLSX.utils.book_append_sheet(wb,ws4,"Highlights");
+ 
+  var benchRows=[["Rank","Business","Score","Strengths","Weaknesses"]];
+  if(bench){
+    (bench.rankings||[]).sort(function(a,b){return a.rank-b.rank;}).forEach(function(r){benchRows.push([r.rank,r.name,r.score,r.strengths,r.weaknesses]);});
+    benchRows.push([]);
+    benchRows.push(["Top Performer",bench.winner||"","","",""]);
+    if(bench.winner_reason) benchRows.push(["Reason","",bench.winner_reason,"",""]);
+  }
+  var ws5=XLSX.utils.aoa_to_sheet(benchRows);
+  ws5["!cols"]=[{wch:8},{wch:25},{wch:8},{wch:50},{wch:50}];
+  XLSX.utils.book_append_sheet(wb,ws5,"Benchmark");
+ 
+  var title=bizs.map(function(b){return b.name;}).join("_vs_").replace(/[^a-z0-9_]/gi,"_").substring(0,40);
+  XLSX.writeFile(wb,"ReviewLens_"+title+".xlsx");
+}
+ 
 </script>
 </body>
 </html>
- 
